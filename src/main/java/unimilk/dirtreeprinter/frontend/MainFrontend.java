@@ -1,6 +1,5 @@
 package unimilk.dirtreeprinter.frontend;
 
-import com.formdev.flatlaf.FlatDarkLaf;
 import unimilk.dirtreeprinter.backend.DirTreeGenerator;
 
 import javax.swing.*;
@@ -13,7 +12,6 @@ public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
 
     public MainFrontend() {
-        FlatDarkLaf.setup();
         setTitle("Directory Tree Generator");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -25,30 +23,46 @@ public class MainFrontend extends JFrame {
         outputArea.setEditable(false);
 
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
-        add(createButtonPanel(), BorderLayout.PAGE_START);
+        add(new TopContainer(), BorderLayout.PAGE_START);
     }
 
-    JPanel createButtonPanel() {
-        JButton selectButton = new JButton("Select Folder");
-        JButton saveButton = new JButton("Save As...");
-        JButton clearButton = new JButton("Clear All");
+    private class TopContainer extends JPanel {
 
-        selectButton.addActionListener(e -> selectFolderToScan());
-        saveButton.addActionListener(e -> saveToFile());
-        clearButton.addActionListener(e -> clearOutput());
+        public TopContainer() {
+            setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+            add(createToolBar());
+            add(createButtonPanel());
+        }
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        panel.add(selectButton);
-        panel.add(saveButton);
-        panel.add(clearButton);
-        return panel;
+        JToolBar createToolBar() {
+            JToolBar toolBar = new JToolBar();
+            JButton fileButton = new JButton("File");
+            toolBar.add(fileButton);
+            return toolBar;
+        }
+
+        JPanel createButtonPanel() {
+            JButton selectButton = new JButton("Select Folder");
+            JButton saveButton = new JButton("Save As...");
+            JButton clearButton = new JButton("Clear All");
+
+            selectButton.addActionListener(e -> selectFolderToScan());
+            saveButton.addActionListener(e -> saveToFile());
+            clearButton.addActionListener(e -> clearOutput());
+
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+            panel.add(selectButton);
+            panel.add(saveButton);
+            panel.add(clearButton);
+            return panel;
+        }
     }
 
     void selectFolderToScan() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
             try {
                 outputArea.setText(DirTreeGenerator.generateTree(dir));
@@ -61,7 +75,7 @@ public class MainFrontend extends JFrame {
     void saveToFile() {
         if (outputArea.getText().isEmpty()) {
             JOptionPane.showMessageDialog(
-                    null,
+                    this,
                     "Please first choose a folder to scan.",
                     "Nothing to Output",
                     JOptionPane.WARNING_MESSAGE
@@ -70,7 +84,7 @@ public class MainFrontend extends JFrame {
         }
 
         JFileChooser chooser = new JFileChooser();
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
                 Files.writeString(
                         chooser.getSelectedFile().toPath(),
@@ -87,7 +101,7 @@ public class MainFrontend extends JFrame {
             return;
         }
         int choice = JOptionPane.showConfirmDialog(
-                null,
+                this,
                 "Do you wish to clear the output?",
                 "Clear All",
                 JOptionPane.YES_NO_OPTION
@@ -99,7 +113,7 @@ public class MainFrontend extends JFrame {
 
     void showError(Exception ex) {
         JOptionPane.showMessageDialog(
-                null,
+                this,
                 ex.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE
