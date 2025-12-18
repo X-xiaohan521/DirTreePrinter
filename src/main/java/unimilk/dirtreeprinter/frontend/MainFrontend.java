@@ -1,5 +1,6 @@
 package unimilk.dirtreeprinter.frontend;
 
+import com.sun.tools.javac.Main;
 import unimilk.dirtreeprinter.backend.DirTreeGenerator;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.nio.file.Path;
 
 public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
+    private static MainFrontend mainFrontend;
 
     public MainFrontend() {
         setTitle("Directory Tree Generator");
@@ -18,26 +20,29 @@ public class MainFrontend extends JFrame {
         setLayout(new BorderLayout());
 
         outputArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        outputArea.setBackground(Color.DARK_GRAY);
-        outputArea.setForeground(Color.WHITE);
         outputArea.setEditable(false);
 
-        add(new JScrollPane(outputArea), BorderLayout.CENTER);
         add(new TopContainer(), BorderLayout.PAGE_START);
+        add(new JScrollPane(outputArea), BorderLayout.CENTER);
+
+        mainFrontend = this;
     }
 
     private class TopContainer extends JPanel {
 
-        public TopContainer() {
+        TopContainer() {
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+            add(new JSeparator(SwingConstants.HORIZONTAL));
             add(createToolBar());
             add(createButtonPanel());
         }
 
         JToolBar createToolBar() {
             JToolBar toolBar = new JToolBar();
-            JButton fileButton = new JButton("File");
-            toolBar.add(fileButton);
+            toolBar.setLayout(new BorderLayout());
+
+            toolBar.add(createFileButton(), BorderLayout.LINE_START);
+
             return toolBar;
         }
 
@@ -56,6 +61,34 @@ public class MainFrontend extends JFrame {
             panel.add(clearButton);
             return panel;
         }
+
+        JButton createFileButton() {
+            JButton fileButton = new JButton("File");
+
+            JPopupMenu menu = new JPopupMenu();
+
+            JMenuItem openItem = new JMenuItem("Open Folder");
+            JMenuItem saveItem = new JMenuItem("Save As...");
+            JMenuItem settingsItem = new JMenuItem("Settings...");
+            JMenuItem exitItem = new JMenuItem("Exit");
+
+            openItem.addActionListener(e -> selectFolderToScan());
+            saveItem.addActionListener(e -> saveToFile());
+            settingsItem.addActionListener(e -> SettingsDialog.openSettingsDialog(mainFrontend));
+            exitItem.addActionListener(e -> System.exit(0));
+
+            menu.add(openItem);
+            menu.add(saveItem);
+            menu.addSeparator();
+            menu.add(settingsItem);
+            menu.addSeparator();
+            menu.add(exitItem);
+
+            fileButton.addActionListener(e -> menu.show(fileButton, 0, fileButton.getHeight()));
+
+            return fileButton;
+        }
+
     }
 
     void selectFolderToScan() {

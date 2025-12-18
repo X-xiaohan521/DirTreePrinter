@@ -1,5 +1,6 @@
 package unimilk.dirtreeprinter;
 
+import com.formdev.flatlaf.*;
 import unimilk.dirtreeprinter.frontend.MainFrontend;
 
 import com.formdev.flatlaf.FlatDarkLaf;
