@@ -1,4 +1,4 @@
-package unimilk.dirtreeprinter;
+package unimilk.dirtreeprinter.backend;
 
 import java.io.IOException;
 import java.nio.file.*;
