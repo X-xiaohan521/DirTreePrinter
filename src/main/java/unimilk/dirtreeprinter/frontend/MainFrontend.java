@@ -1,7 +1,7 @@
 package unimilk.dirtreeprinter.frontend;
 
-import com.sun.tools.javac.Main;
 import unimilk.dirtreeprinter.backend.DirTreeGenerator;
+import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 
 import javax.swing.*;
 import java.awt.*;

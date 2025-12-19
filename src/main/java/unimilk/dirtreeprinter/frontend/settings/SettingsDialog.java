@@ -1,9 +1,7 @@
-package unimilk.dirtreeprinter.frontend;
+package unimilk.dirtreeprinter.frontend.settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Set;
-import java.util.stream.Stream;
 
 public class SettingsDialog extends JDialog {
 
@@ -15,8 +13,17 @@ public class SettingsDialog extends JDialog {
         setSize(600, 400);
         setLocationRelativeTo(owner);
 
-        // create right cards set
+        // create right cards set & OK, Cancel button
+        JPanel rightPanel = new JPanel(new BorderLayout());
         createCardPanel();
+        rightPanel.add(cardPanel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        JButton okButton = new JButton("OK");
+        JButton cancelButton = new JButton("Cancel");
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+        rightPanel.add(buttonPanel, BorderLayout.PAGE_END);
 
         // create left scroll categories
         JList<String> categoryList = createCategoryList();
@@ -25,7 +32,7 @@ public class SettingsDialog extends JDialog {
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
                 leftScroll,
-                cardPanel
+                rightPanel
         );
 
         splitPane.setDividerLocation(180);
@@ -96,7 +103,7 @@ public class SettingsDialog extends JDialog {
         panel.add(new JScrollPane(ruleList), BorderLayout.CENTER);
 
         // add/remove buttons
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEADING));
         bottom.add(new JButton("Add"));
         bottom.add(new JButton("Remove"));
         panel.add(bottom, BorderLayout.PAGE_END);
@@ -118,5 +125,9 @@ public class SettingsDialog extends JDialog {
     public static void openSettingsDialog(JFrame owner) {
         SettingsDialog settingsDialog = new SettingsDialog(owner);
         settingsDialog.setVisible(true);
+    }
+
+    public void closeSettingsDialog() {
+
     }
 }

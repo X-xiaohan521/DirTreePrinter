@@ -1,4 +1,4 @@
-package unimilk.dirtreeprinter.frontend;
+package unimilk.dirtreeprinter.frontend.settings;
 
 public final class SettingsCards {
     public static final String GENERAL = "General";
