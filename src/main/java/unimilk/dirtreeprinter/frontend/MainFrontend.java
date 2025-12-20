@@ -1,6 +1,7 @@
 package unimilk.dirtreeprinter.frontend;
 
 import unimilk.dirtreeprinter.backend.DirTreeGenerator;
+import unimilk.dirtreeprinter.backend.settings.Settings;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
     private static MainFrontend mainFrontend;
 
-    public MainFrontend() {
+    public MainFrontend(Settings settings) {
         setTitle("Directory Tree Generator");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

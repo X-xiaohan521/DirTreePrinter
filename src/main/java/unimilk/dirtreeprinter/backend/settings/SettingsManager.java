@@ -61,6 +61,7 @@ public class SettingsManager implements ISettingsManager {
                     }
                 }
             }
+            settings.markClean();
             return settings;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load settings.", e);
@@ -84,15 +85,20 @@ public class SettingsManager implements ISettingsManager {
         // write YAML file
         try (Writer writer = Files.newBufferedWriter(configPath)) {
             yaml.dump(root, writer);
+            settings.markClean();
         } catch (IOException e) {
             throw new RuntimeException("Failed to save settings.", e);
         }
     }
 
     private Settings saveDefaultConfig() {
-        Settings settings = new Settings();
-        saveSettings(settings);
-        return settings;
+        try (InputStream in = getClass().getResourceAsStream("/config.yml")) {
+            assert in != null;
+            Files.copy(in, configPath);
+            return loadSettings();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write default config.", e);
+        }
     }
 
 }

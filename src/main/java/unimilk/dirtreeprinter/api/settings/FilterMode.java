@@ -12,6 +12,11 @@ public enum FilterMode {
         this.isBlacklist = isBlacklist;
     }
 
+    /**
+     * Get a FilterMode by its name.
+     * @param name  the name you want to get a FilterMode from
+     * @return   the corresponding FilterMode
+     */
     public static FilterMode of(String name) {
         if (name.equals(BLACKLIST.getName())) {
             return BLACKLIST;

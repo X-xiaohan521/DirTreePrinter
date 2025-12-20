@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Settings implements ISettings {
+
     private FilterMode filterMode;
     private final List<String> rules = new ArrayList<>();
+    private boolean modified = false;
 
     public Settings() {
         this.filterMode = FilterMode.BLACKLIST;
@@ -22,6 +24,7 @@ public class Settings implements ISettings {
     @Override
     public void setFilterMode(FilterMode filterMode) {
         this.filterMode = filterMode;
+        modified = true;
     }
 
     @Override
@@ -33,11 +36,27 @@ public class Settings implements ISettings {
     public void addRule(String rule) {
         if (!rules.contains(rule)) {
             rules.add(rule);
+            modified = true;
         }
     }
 
     @Override
     public boolean removeRule(String rule) {
-        return rules.remove(rule);
+        if (rules.remove(rule)) {
+            modified = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isModified() {
+        return modified;
+    }
+
+    @Override
+    public void markClean() {
+        modified = false;
     }
 }

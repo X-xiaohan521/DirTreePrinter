@@ -34,4 +34,14 @@ public interface ISettings {
      */
     boolean removeRule(String rule);
 
+    /**
+     * Get the modification status of the settings.
+     * @return  <code>true</code> if settings has been modified
+     */
+    boolean isModified();
+
+    /**
+     * Mark that the settings haven't been modified.
+     */
+    void markClean();
 }
