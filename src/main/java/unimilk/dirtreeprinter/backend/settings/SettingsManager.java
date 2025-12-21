@@ -6,8 +6,10 @@ import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,15 +19,17 @@ import org.yaml.snakeyaml.Yaml;
 public class SettingsManager implements ISettingsManager {
 
     private final Path configPath;
+    private Settings settings;
 
     public SettingsManager(Path configPath) {
         this.configPath = configPath;
     }
 
     @Override
-    public Settings loadSettings() {
+    public void loadSettings() {
         if (!Files.exists(configPath)) {
-            return saveDefaultConfig();
+            saveDefaultConfig();
+            return;
         }
 
         Yaml yaml = new Yaml();
@@ -33,7 +37,8 @@ public class SettingsManager implements ISettingsManager {
             // load YAML file
             Map<String, Object> root = yaml.load(in);
             if (root == null) {
-                return saveDefaultConfig();
+                saveDefaultConfig();
+                return;
             }
 
             // set settings
@@ -62,7 +67,8 @@ public class SettingsManager implements ISettingsManager {
                 }
             }
             settings.markClean();
-            return settings;
+            this.settings = settings;
+            return;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load settings.", e);
         }
@@ -85,20 +91,26 @@ public class SettingsManager implements ISettingsManager {
         // write YAML file
         try (Writer writer = Files.newBufferedWriter(configPath)) {
             yaml.dump(root, writer);
-            settings.markClean();
+            this.settings = settings;
+            this.settings.markClean();
         } catch (IOException e) {
             throw new RuntimeException("Failed to save settings.", e);
         }
     }
 
-    private Settings saveDefaultConfig() {
+    private void saveDefaultConfig() {
         try (InputStream in = getClass().getResourceAsStream("/config.yml")) {
+            Files.createDirectories(configPath.getParent());
             assert in != null;
-            Files.copy(in, configPath);
-            return loadSettings();
+            Files.copy(in, configPath, StandardCopyOption.REPLACE_EXISTING);
+            loadSettings();
         } catch (IOException e) {
             throw new RuntimeException("Failed to write default config.", e);
         }
+    }
+
+    public Settings getSettings() {
+        return this.settings;
     }
 
 }

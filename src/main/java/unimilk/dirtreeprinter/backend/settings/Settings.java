@@ -59,4 +59,15 @@ public class Settings implements ISettings {
     public void markClean() {
         modified = false;
     }
+
+    @Override
+    public Settings copy() {
+        Settings newSettings = new Settings();
+        newSettings.setFilterMode(this.getFilterMode());
+        for (String rule : this.rules) {
+            newSettings.addRule(rule);
+        }
+        newSettings.markClean();
+        return newSettings;
+    }
 }

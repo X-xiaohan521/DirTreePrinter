@@ -1,6 +1,7 @@
 package unimilk.dirtreeprinter;
 
 import com.formdev.flatlaf.*;
+import unimilk.dirtreeprinter.api.settings.FilterMode;
 import unimilk.dirtreeprinter.backend.AppPaths;
 import unimilk.dirtreeprinter.backend.settings.Settings;
 import unimilk.dirtreeprinter.backend.settings.SettingsManager;
@@ -13,7 +14,6 @@ import java.nio.file.Path;
 
 public class DirTreeApp {
 
-    private static Settings settings;
     private static MainFrontend mainFrontend;
 
     public static void main(String[] args) {
@@ -23,11 +23,12 @@ public class DirTreeApp {
 
         // load settings
         SettingsManager settingsManager = new SettingsManager(configPath);
-        settings = settingsManager.loadSettings();
+        settingsManager.loadSettings();
 
         // load frontend
         FlatDarkLaf.setup();
-        mainFrontend = new MainFrontend(settings);
+        mainFrontend = new MainFrontend();
         SwingUtilities.invokeLater(() -> mainFrontend.setVisible(true));
     }
+
 }

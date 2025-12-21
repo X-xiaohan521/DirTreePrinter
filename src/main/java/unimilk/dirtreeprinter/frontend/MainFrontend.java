@@ -14,7 +14,7 @@ public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
     private static MainFrontend mainFrontend;
 
-    public MainFrontend(Settings settings) {
+    public MainFrontend() {
         setTitle("Directory Tree Generator");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

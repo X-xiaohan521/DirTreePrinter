@@ -44,4 +44,10 @@ public interface ISettings {
      * Mark that the settings haven't been modified.
      */
     void markClean();
+
+    /**
+     * Copy the settings to a new instance.
+     * @return   a new Settings instance that contains the same settings as the old
+     */
+    ISettings copy();
 }
