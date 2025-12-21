@@ -69,9 +69,7 @@ public class Settings implements ISettings {
     public Settings copy() {
         Settings newSettings = new Settings();
         newSettings.setFilterMode(this.getFilterMode());
-        for (String rule : this.rules) {
-            newSettings.addRule(rule);
-        }
+        this.rules.forEach(newSettings::addRule);
         if (this.isModified()) {
             newSettings.markDirty();
         } else {

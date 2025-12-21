@@ -20,11 +20,12 @@ public class SettingsDialog extends JDialog {
 
         this.settingsCopy = settingsCopy;
 
-        // create right cards set & OK, Cancel button
+        // create right cards set
         JPanel rightPanel = new JPanel(new BorderLayout());
         createCardPanel();
         rightPanel.add(cardPanel, BorderLayout.CENTER);
 
+        // create OK, Cancel button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         JButton applyButton = new JButton("Apply");
         JButton okButton = new JButton("OK");
@@ -41,18 +42,16 @@ public class SettingsDialog extends JDialog {
         JList<String> categoryList = createCategoryList();
         JScrollPane leftScroll = new JScrollPane(categoryList);
 
+        // construct the whole dialog with left and right part
         JSplitPane splitPane = new JSplitPane(
                 JSplitPane.HORIZONTAL_SPLIT,
                 leftScroll,
                 rightPanel
         );
-
         splitPane.setDividerLocation(180);
         splitPane.setResizeWeight(0);
         splitPane.setBorder(null);
-
         add(splitPane, BorderLayout.CENTER);
-
     }
 
     private JList<String> createCategoryList() {
@@ -82,7 +81,7 @@ public class SettingsDialog extends JDialog {
         cardPanel = new JPanel(cardLayout);
 
         cardPanel.add(createGeneralPanel(), SettingsCards.GENERAL);
-        cardPanel.add(createIgnoreRulesPanel(), SettingsCards.IGNORE_RULES);
+        cardPanel.add(new IgnoreRulesCard(settingsCopy), SettingsCards.IGNORE_RULES);
         cardPanel.add(createAppearancePanel(), SettingsCards.APPEARANCE);
         cardPanel.add(createAdvancedPanel(), SettingsCards.ADVANCED);
 
@@ -92,44 +91,6 @@ public class SettingsDialog extends JDialog {
         // TODO
         return new JPanel();
     }
-
-    private JPanel createIgnoreRulesPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        // mode selection
-        JRadioButton blacklistButton = new JRadioButton("Blacklist", true);
-        JRadioButton whitelistButton = new JRadioButton("Whitelist");
-
-        blacklistButton.addActionListener(e -> this.settingsCopy.setFilterMode(FilterMode.BLACKLIST));
-        whitelistButton.addActionListener(e -> this.settingsCopy.setFilterMode(FilterMode.WHITELIST));
-
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(blacklistButton);
-        buttonGroup.add(whitelistButton);
-
-        if (!settingsCopy.getFilterMode().isBlacklist()) {
-            whitelistButton.setSelected(true);
-        }
-
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        top.add(blacklistButton);
-        top.add(whitelistButton);
-        panel.add(top, BorderLayout.PAGE_START);
-
-        // rules list
-        DefaultListModel<String> model = new DefaultListModel<>();
-        JList<String> ruleList = new JList<>(model);
-        panel.add(new JScrollPane(ruleList), BorderLayout.CENTER);
-
-        // add/remove buttons
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        bottom.add(new JButton("Add"));
-        bottom.add(new JButton("Remove"));
-        panel.add(bottom, BorderLayout.PAGE_END);
-
-        return panel;
-    }
-
 
     private JPanel createAppearancePanel() {
         // TODO
@@ -159,4 +120,5 @@ public class SettingsDialog extends JDialog {
     public void onCancel() {
         dispose();
     }
+
 }
