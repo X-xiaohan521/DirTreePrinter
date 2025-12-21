@@ -1,5 +1,8 @@
 package unimilk.dirtreeprinter.backend;
 
+import unimilk.dirtreeprinter.DirTreeApp;
+import unimilk.dirtreeprinter.api.settings.FilterMode;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Comparator;
@@ -26,6 +29,7 @@ public class DirTreeGenerator {
         try (Stream<Path> stream = Files.list(dir)) {
             children = stream
                     .sorted(directoryFirst())
+                    .filter(DirTreeGenerator::dirBlackFilter)
                     .collect(Collectors.toList());
         }
 
@@ -55,5 +59,14 @@ public class DirTreeGenerator {
             return a.getFileName().toString()
                     .compareToIgnoreCase(b.getFileName().toString());
         };
+    }
+
+    private static Boolean dirBlackFilter(Path dir) {
+        boolean isRulesContainDir = DirTreeApp.getSettingsManager().getSettings().getRules().contains(dir.getFileName().toString());
+        if (DirTreeApp.getSettingsManager().getSettings().getFilterMode().equals(FilterMode.BLACKLIST)) {
+            return !isRulesContainDir;
+        } else {
+            return true;
+        }
     }
 }
