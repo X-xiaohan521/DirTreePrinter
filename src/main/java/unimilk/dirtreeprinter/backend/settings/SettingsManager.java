@@ -1,12 +1,12 @@
 package unimilk.dirtreeprinter.backend.settings;
 
 import unimilk.dirtreeprinter.api.settings.FilterMode;
+import unimilk.dirtreeprinter.api.settings.ISettings;
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -19,7 +19,7 @@ import org.yaml.snakeyaml.Yaml;
 public class SettingsManager implements ISettingsManager {
 
     private final Path configPath;
-    private Settings settings;
+    private ISettings settings;
 
     public SettingsManager(Path configPath) {
         this.configPath = configPath;
@@ -76,7 +76,7 @@ public class SettingsManager implements ISettingsManager {
     }
 
     @Override
-    public void saveSettings(Settings settings) {
+    public void saveSettings() {
         Yaml yaml = new Yaml();
 
         // filter
@@ -91,7 +91,6 @@ public class SettingsManager implements ISettingsManager {
         // write YAML file
         try (Writer writer = Files.newBufferedWriter(configPath)) {
             yaml.dump(root, writer);
-            this.settings = settings;
             this.settings.markClean();
         } catch (IOException e) {
             throw new RuntimeException("Failed to save settings.", e);
@@ -109,8 +108,17 @@ public class SettingsManager implements ISettingsManager {
         }
     }
 
-    public Settings getSettings() {
+    public ISettings getSettings() {
         return this.settings;
+    }
+
+    public void applySettingsFrom(ISettings newSettings) {
+        this.settings = newSettings;
+    }
+
+    public void applyAndSaveSettingsFrom(ISettings newSettings) {
+        this.settings = newSettings;
+        saveSettings();
     }
 
 }

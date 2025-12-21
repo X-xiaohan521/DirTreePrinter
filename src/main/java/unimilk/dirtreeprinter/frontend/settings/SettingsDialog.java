@@ -1,5 +1,9 @@
 package unimilk.dirtreeprinter.frontend.settings;
 
+import unimilk.dirtreeprinter.DirTreeApp;
+import unimilk.dirtreeprinter.api.settings.FilterMode;
+import unimilk.dirtreeprinter.api.settings.ISettings;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,11 +11,14 @@ public class SettingsDialog extends JDialog {
 
     private CardLayout cardLayout;
     private JPanel cardPanel;
+    private final ISettings settingsCopy;
 
-    protected SettingsDialog(JFrame owner) {
+    protected SettingsDialog(JFrame owner, ISettings settingsCopy) {
         super(owner, "Settings", false);
         setSize(600, 400);
         setLocationRelativeTo(owner);
+
+        this.settingsCopy = settingsCopy;
 
         // create right cards set & OK, Cancel button
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -19,8 +26,13 @@ public class SettingsDialog extends JDialog {
         rightPanel.add(cardPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+        JButton applyButton = new JButton("Apply");
         JButton okButton = new JButton("OK");
         JButton cancelButton = new JButton("Cancel");
+        applyButton.addActionListener(e -> onApply());
+        okButton.addActionListener(e -> onOK());
+        cancelButton.addActionListener(e -> onCancel());
+        buttonPanel.add(applyButton);
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
         rightPanel.add(buttonPanel, BorderLayout.PAGE_END);
@@ -88,9 +100,16 @@ public class SettingsDialog extends JDialog {
         JRadioButton blacklistButton = new JRadioButton("Blacklist", true);
         JRadioButton whitelistButton = new JRadioButton("Whitelist");
 
+        blacklistButton.addActionListener(e -> this.settingsCopy.setFilterMode(FilterMode.BLACKLIST));
+        whitelistButton.addActionListener(e -> this.settingsCopy.setFilterMode(FilterMode.WHITELIST));
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(blacklistButton);
         buttonGroup.add(whitelistButton);
+
+        if (!settingsCopy.getFilterMode().isBlacklist()) {
+            whitelistButton.setSelected(true);
+        }
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEADING));
         top.add(blacklistButton);
@@ -123,11 +142,21 @@ public class SettingsDialog extends JDialog {
     }
 
     public static void openSettingsDialog(JFrame owner) {
-        SettingsDialog settingsDialog = new SettingsDialog(owner);
+        ISettings settingsCopy = DirTreeApp.getSettingsManager().getSettings().copy();
+        SettingsDialog settingsDialog = new SettingsDialog(owner, settingsCopy);
         settingsDialog.setVisible(true);
     }
 
-    public void closeSettingsDialog() {
+    public void onApply() {
+        DirTreeApp.getSettingsManager().applySettingsFrom(settingsCopy);
+    }
 
+    public void onOK() {
+        DirTreeApp.getSettingsManager().applyAndSaveSettingsFrom(settingsCopy);
+        dispose();
+    }
+
+    public void onCancel() {
+        dispose();
     }
 }

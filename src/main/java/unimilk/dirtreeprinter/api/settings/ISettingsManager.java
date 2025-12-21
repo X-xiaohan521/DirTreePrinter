@@ -1,7 +1,5 @@
 package unimilk.dirtreeprinter.api.settings;
 
-import unimilk.dirtreeprinter.backend.settings.Settings;
-
 public interface ISettingsManager {
     /**
      * Load config from file.
@@ -9,9 +7,8 @@ public interface ISettingsManager {
     void loadSettings();
 
     /**
-     * Save config to file.
-     * @param settings  the settings to be saved
+     * Save current settings to file.
      *
      */
-    void saveSettings(Settings settings);
+    void saveSettings();
 }

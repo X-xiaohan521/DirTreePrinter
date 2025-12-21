@@ -1,9 +1,7 @@
 package unimilk.dirtreeprinter;
 
 import com.formdev.flatlaf.*;
-import unimilk.dirtreeprinter.api.settings.FilterMode;
 import unimilk.dirtreeprinter.backend.AppPaths;
-import unimilk.dirtreeprinter.backend.settings.Settings;
 import unimilk.dirtreeprinter.backend.settings.SettingsManager;
 import unimilk.dirtreeprinter.frontend.MainFrontend;
 
@@ -15,6 +13,7 @@ import java.nio.file.Path;
 public class DirTreeApp {
 
     private static MainFrontend mainFrontend;
+    private static SettingsManager settingsManager;
 
     public static void main(String[] args) {
 
@@ -22,7 +21,7 @@ public class DirTreeApp {
         Path configPath = AppPaths.getConfigFile();
 
         // load settings
-        SettingsManager settingsManager = new SettingsManager(configPath);
+        settingsManager = new SettingsManager(configPath);
         settingsManager.loadSettings();
 
         // load frontend
@@ -31,4 +30,7 @@ public class DirTreeApp {
         SwingUtilities.invokeLater(() -> mainFrontend.setVisible(true));
     }
 
+    public static SettingsManager getSettingsManager() {
+        return settingsManager;
+    }
 }

@@ -61,13 +61,22 @@ public class Settings implements ISettings {
     }
 
     @Override
+    public void markDirty() {
+        modified = true;
+    }
+
+    @Override
     public Settings copy() {
         Settings newSettings = new Settings();
         newSettings.setFilterMode(this.getFilterMode());
         for (String rule : this.rules) {
             newSettings.addRule(rule);
         }
-        newSettings.markClean();
+        if (this.isModified()) {
+            newSettings.markDirty();
+        } else {
+            newSettings.markClean();
+        }
         return newSettings;
     }
 }

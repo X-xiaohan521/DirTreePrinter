@@ -46,6 +46,11 @@ public interface ISettings {
     void markClean();
 
     /**
+     * Mark that the settings have unsaved modification.
+     */
+    void markDirty();
+
+    /**
      * Copy the settings to a new instance.
      * @return   a new Settings instance that contains the same settings as the old
      */
