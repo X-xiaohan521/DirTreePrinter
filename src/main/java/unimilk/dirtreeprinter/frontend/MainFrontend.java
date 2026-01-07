@@ -1,6 +1,7 @@
 package unimilk.dirtreeprinter.frontend;
 
-import unimilk.dirtreeprinter.backend.tree.DirTreeGenerator;
+import unimilk.dirtreeprinter.api.settings.ISettingsManager;
+import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 
 import javax.swing.*;
@@ -14,8 +15,13 @@ public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
     private static MainFrontend mainFrontend;
     private String rootFolder;
+    private final ISettingsManager settingsManager;
+    private final IDirTreeGenerator dirTreeGenerator;
 
-    public MainFrontend() {
+    public MainFrontend(ISettingsManager settingsManager, IDirTreeGenerator dirTreeGenerator) {
+        this.settingsManager = settingsManager;
+        this.dirTreeGenerator = dirTreeGenerator;
+
         setTitle("Directory Tree Generator");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -80,7 +86,7 @@ public class MainFrontend extends JFrame {
 
             openItem.addActionListener(e -> selectFolderToScan());
             saveItem.addActionListener(e -> saveToFile());
-            settingsItem.addActionListener(e -> SettingsDialog.openSettingsDialog(mainFrontend));
+            settingsItem.addActionListener(e -> SettingsDialog.openSettingsDialog(mainFrontend, settingsManager));
             exitItem.addActionListener(e -> System.exit(0));
 
             menu.add(openItem);
@@ -104,7 +110,7 @@ public class MainFrontend extends JFrame {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
             try {
-                outputArea.setText(DirTreeGenerator.generateTree(dir));
+                outputArea.setText(dirTreeGenerator.generateTree(dir, settingsManager.getSettings()));
                 rootFolder = dir.getFileName().toString();
             } catch (IOException ex) {
                 showError(ex);

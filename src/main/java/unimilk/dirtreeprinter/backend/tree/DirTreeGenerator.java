@@ -1,7 +1,8 @@
 package unimilk.dirtreeprinter.backend.tree;
 
-import unimilk.dirtreeprinter.DirTreeApp;
 import unimilk.dirtreeprinter.api.settings.FilterMode;
+import unimilk.dirtreeprinter.api.settings.ISettings;
+import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -11,47 +12,51 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DirTreeGenerator {
+public class DirTreeGenerator implements IDirTreeGenerator {
+    public DirTreeGenerator() {
 
-    public static String generateTree(Path root) throws IOException {
+    }
+
+    @Override
+    public String generateTree(Path root, ISettings settings) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append(root.getFileName()).append("/\n");
 
-        TreeNode rootNode = generateTreeNode(root);
+        TreeNode rootNode = generateTreeNode(root, settings);
         buildTree(rootNode, "", sb);
 
         return sb.toString();
     }
 
-    private static TreeNode generateTreeNode(Path dir) throws IOException{
+    private TreeNode generateTreeNode(Path path, ISettings settings) throws IOException{
         List<TreeNode> childrenNodes = new ArrayList<>();
-        boolean isEnabled = dirFilter(dir);
+        boolean isEnabled = pathFilter(path, settings);
 
-        if (!Files.isDirectory(dir)) {
-            return new TreeNode(dir, new ArrayList<>(), isEnabled);
+        if (!Files.isDirectory(path)) {
+            return new TreeNode(path, new ArrayList<>(), isEnabled);
         }
 
         List<Path> childrenPaths;
-        try (Stream<Path> stream = Files.list(dir)) {
+        try (Stream<Path> stream = Files.list(path)) {
             childrenPaths = stream
                     .sorted(directoryFirst())
                     .collect(Collectors.toList());
         }
 
         for (Path childPath : childrenPaths) {
-            TreeNode childNode = generateTreeNode(childPath);
+            TreeNode childNode = generateTreeNode(childPath, settings);
             childrenNodes.add(childNode);
-            if (DirTreeApp.getSettingsManager().getSettings().getFilterMode().equals(FilterMode.WHITELIST)) {
+            if (settings.getFilterMode().equals(FilterMode.WHITELIST)) {
                 if (isEnabled || childNode.isEnabled()) {
                     isEnabled = true;
                 }
             }
         }
 
-        return new TreeNode(dir, childrenNodes, isEnabled);
+        return new TreeNode(path, childrenNodes, isEnabled);
     }
 
-    private static void buildTree(TreeNode node, String prefix, StringBuilder sb) throws IOException {
+    private void buildTree(TreeNode node, String prefix, StringBuilder sb) {
         if (node.getChildren().isEmpty()) {
             return;
         }
@@ -77,7 +82,7 @@ public class DirTreeGenerator {
         }
     }
 
-    private static Comparator<Path> directoryFirst() {
+    private Comparator<Path> directoryFirst() {
         return (a, b) -> {
             try {
                 boolean ad = Files.isDirectory(a);
@@ -89,9 +94,9 @@ public class DirTreeGenerator {
         };
     }
 
-    private static Boolean dirFilter(Path dir) {
-        boolean isRulesContainDir = DirTreeApp.getSettingsManager().getSettings().getRules().contains(dir.getFileName().toString());
-        if (DirTreeApp.getSettingsManager().getSettings().getFilterMode().equals(FilterMode.BLACKLIST)) {
+    private Boolean pathFilter(Path dir, ISettings settings) {
+        boolean isRulesContainDir = settings.getRules().contains(dir.getFileName().toString());
+        if (settings.getFilterMode().equals(FilterMode.BLACKLIST)) {
             return !isRulesContainDir;
         } else {
             return isRulesContainDir;

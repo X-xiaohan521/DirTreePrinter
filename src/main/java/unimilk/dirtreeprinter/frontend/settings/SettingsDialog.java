@@ -1,8 +1,7 @@
 package unimilk.dirtreeprinter.frontend.settings;
 
-import unimilk.dirtreeprinter.DirTreeApp;
-import unimilk.dirtreeprinter.api.settings.FilterMode;
 import unimilk.dirtreeprinter.api.settings.ISettings;
+import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,13 +11,15 @@ public class SettingsDialog extends JDialog {
     private CardLayout cardLayout;
     private JPanel cardPanel;
     private final ISettings settingsCopy;
+    private final ISettingsManager settingsManager;
 
-    protected SettingsDialog(JFrame owner, ISettings settingsCopy) {
+    protected SettingsDialog(JFrame owner, ISettingsManager settingsManager) {
         super(owner, "Settings", false);
         setSize(600, 400);
         setLocationRelativeTo(owner);
 
-        this.settingsCopy = settingsCopy;
+        this.settingsManager = settingsManager;
+        this.settingsCopy = settingsManager.getSettings().copy();
 
         // create right cards set
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -102,18 +103,17 @@ public class SettingsDialog extends JDialog {
         return new JPanel();
     }
 
-    public static void openSettingsDialog(JFrame owner) {
-        ISettings settingsCopy = DirTreeApp.getSettingsManager().getSettings().copy();
-        SettingsDialog settingsDialog = new SettingsDialog(owner, settingsCopy);
+    public static void openSettingsDialog(JFrame owner, ISettingsManager settingsManager) {
+        SettingsDialog settingsDialog = new SettingsDialog(owner, settingsManager);
         settingsDialog.setVisible(true);
     }
 
     public void onApply() {
-        DirTreeApp.getSettingsManager().applySettingsFrom(settingsCopy);
+        settingsManager.applySettingsFrom(settingsCopy);
     }
 
     public void onOK() {
-        DirTreeApp.getSettingsManager().applyAndSaveSettingsFrom(settingsCopy);
+        settingsManager.applyAndSaveSettingsFrom(settingsCopy);
         dispose();
     }
 
