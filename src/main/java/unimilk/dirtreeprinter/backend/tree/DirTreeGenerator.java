@@ -94,8 +94,8 @@ public class DirTreeGenerator implements IDirTreeGenerator {
         };
     }
 
-    private Boolean pathFilter(Path dir, ISettings settings) {
-        boolean isRulesContainDir = settings.getRules().contains(dir.getFileName().toString());
+    private boolean pathFilter(Path path, ISettings settings) {
+        boolean isRulesContainDir = settings.getRules().contains(path.getFileName().toString());
         if (settings.getFilterMode().equals(FilterMode.BLACKLIST)) {
             return !isRulesContainDir;
         } else {
