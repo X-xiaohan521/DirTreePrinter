@@ -1,11 +1,13 @@
 package unimilk.dirtreeprinter.frontend;
 
 import unimilk.dirtreeprinter.backend.DirTreeGenerator;
-import unimilk.dirtreeprinter.backend.settings.Settings;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +15,7 @@ import java.nio.file.Path;
 public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
     private static MainFrontend mainFrontend;
+    private String rootFolder;
 
     public MainFrontend() {
         setTitle("Directory Tree Generator");
@@ -27,6 +30,10 @@ public class MainFrontend extends JFrame {
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
 
         mainFrontend = this;
+    }
+
+    public String getRootFolder() {
+        return rootFolder;
     }
 
     private class TopContainer extends JPanel {
@@ -100,6 +107,7 @@ public class MainFrontend extends JFrame {
             Path dir = chooser.getSelectedFile().toPath();
             try {
                 outputArea.setText(DirTreeGenerator.generateTree(dir));
+                rootFolder = dir.getFileName().toString();
             } catch (IOException ex) {
                 showError(ex);
             }
@@ -117,11 +125,13 @@ public class MainFrontend extends JFrame {
             return;
         }
 
-        JFileChooser chooser = new JFileChooser();
-        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        SaveDialog saveDialog = new SaveDialog(this);
+
+        if (saveDialog.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = saveDialog.getSelectedFile();
             try {
                 Files.writeString(
-                        chooser.getSelectedFile().toPath(),
+                        fileToSave.toPath(),
                         outputArea.getText()
                 );
             } catch (IOException ex) {
