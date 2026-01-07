@@ -1,11 +1,9 @@
 package unimilk.dirtreeprinter.frontend;
 
-import unimilk.dirtreeprinter.backend.DirTreeGenerator;
+import unimilk.dirtreeprinter.backend.tree.DirTreeGenerator;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
