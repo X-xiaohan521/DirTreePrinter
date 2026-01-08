@@ -1,4 +1,4 @@
-# (ICON) DirTreeGenerator
+# ![icon](src/main/resources/icons/icon64.png) DirTreeGenerator
 
 🚀 **DirTreeGenerator** is a lightweight desktop utility to generate **clean, readable directory tree structures** with configurable ignore rules.
 
