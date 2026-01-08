@@ -4,12 +4,14 @@ import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class MainFrontend extends JFrame {
     final JTextArea outputArea = new JTextArea();
@@ -23,6 +25,13 @@ public class MainFrontend extends JFrame {
         this.dirTreeGenerator = dirTreeGenerator;
 
         setTitle("Directory Tree Generator");
+        List<Image> icons = List.of(
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/icon16.png"))).getImage(),
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/icon32.png"))).getImage(),
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/icon48.png"))).getImage(),
+                new ImageIcon(Objects.requireNonNull(getClass().getResource("/icons/icon64.png"))).getImage()
+        );
+        setIconImages(icons);
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
