@@ -7,12 +7,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
-class CheckBoxTreeNode extends JPanel implements TreeCellRenderer {
+public class CheckBoxTreeCellRenderer extends JPanel implements TreeCellRenderer {
 
     private final JCheckBox checkBox = new JCheckBox();
     private final JLabel label = new JLabel();
 
-    public CheckBoxTreeNode() {
+    public CheckBoxTreeCellRenderer() {
         setLayout(new BorderLayout());
         add(checkBox, BorderLayout.WEST);
         add(label, BorderLayout.CENTER);

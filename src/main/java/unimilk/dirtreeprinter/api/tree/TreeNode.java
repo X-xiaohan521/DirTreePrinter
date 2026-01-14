@@ -22,6 +22,12 @@ public class TreeNode {
         this.selected = selected;
     }
 
+    public TreeNode() {
+        this.path = null;
+        this.children = null;
+        this.enabled = false;
+    }
+
     public Path getPath() {
         return path;
     }

@@ -141,7 +141,7 @@ The executable JAR will be generated in: `target/`
 
 ## 📜 Changelog
 > 📌 Only the latest version is listed here. See `CHANGELOG.md` for older versions.
-### [1.1.0] - 2026-01-14
+### [2.0.0] - 2026-01-14
 
 ### 🆕 What's New
 - 

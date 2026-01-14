@@ -13,7 +13,7 @@ public class Settings implements ISettings {
     private final List<String> rules = new ArrayList<>();
     private boolean modified = false;
 
-    Settings() {
+    public Settings() {
         this.filterMode = FilterMode.BLACKLIST;
     }
 

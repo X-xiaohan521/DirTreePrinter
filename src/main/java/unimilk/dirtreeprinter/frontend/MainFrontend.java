@@ -2,10 +2,15 @@ package unimilk.dirtreeprinter.frontend;
 
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
+import unimilk.dirtreeprinter.api.tree.TreeNode;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
+import unimilk.dirtreeprinter.frontend.tree.CheckBoxTreeCellRenderer;
 
 import java.util.List;
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -14,11 +19,12 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class MainFrontend extends JFrame {
-    final JTextArea outputArea = new JTextArea();
+
     private static MainFrontend mainFrontend;
     private String rootFolder;
     private final ISettingsManager settingsManager;
     private final IDirTreeGenerator dirTreeGenerator;
+    private final TreeDisplayArea treeDisplayArea;
 
     public MainFrontend(ISettingsManager settingsManager, IDirTreeGenerator dirTreeGenerator) {
         this.settingsManager = settingsManager;
@@ -36,11 +42,10 @@ public class MainFrontend extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        outputArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        outputArea.setEditable(false);
+        treeDisplayArea = new TreeDisplayArea();
 
         add(new TopContainer(), BorderLayout.PAGE_START);
-        add(new JScrollPane(outputArea), BorderLayout.CENTER);
+        add(new JScrollPane(treeDisplayArea), BorderLayout.CENTER);
 
         mainFrontend = this;
     }
@@ -112,6 +117,47 @@ public class MainFrontend extends JFrame {
 
     }
 
+    private class TreeDisplayArea extends JPanel {
+
+        private TreeModel treeModel;
+        private JTree tree;
+
+        TreeDisplayArea() {
+            setVisible(false);
+        }
+
+        void generateUiTree(TreeNode rootNode) {
+            DefaultMutableTreeNode rootUiNode = generateUiTreeNode(rootNode);
+            treeModel = new DefaultTreeModel(rootUiNode);
+        }
+
+        void showTree() {
+            tree = new JTree(treeModel);
+            tree.setCellRenderer(new CheckBoxTreeCellRenderer());
+            add(tree);
+            tree.setVisible(true);
+            this.setVisible(true);
+        }
+
+        DefaultMutableTreeNode generateUiTreeNode(TreeNode backendNode) {
+            DefaultMutableTreeNode uiNode = new DefaultMutableTreeNode(backendNode);
+            for (TreeNode child : backendNode.getChildren()) {
+                uiNode.add(generateUiTreeNode(child));
+            }
+            return uiNode;
+        }
+
+        public boolean isEmpty() {
+            // TODO
+            return true;
+        }
+
+        public void clear() {
+            tree.setVisible(false);
+            this.setVisible(false);
+        }
+    }
+
     void selectFolderToScan() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -119,7 +165,9 @@ public class MainFrontend extends JFrame {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
             try {
-                outputArea.setText(dirTreeGenerator.generateTree(dir, settingsManager.getSettings()));
+                TreeNode rootNode = dirTreeGenerator.generateTree(dir, settingsManager.getSettings());
+                treeDisplayArea.generateUiTree(rootNode);
+                treeDisplayArea.showTree();
                 rootFolder = dir.getFileName().toString();
             } catch (IOException ex) {
                 showError(ex);
@@ -128,7 +176,7 @@ public class MainFrontend extends JFrame {
     }
 
     void saveToFile() {
-        if (outputArea.getText().isEmpty()) {
+        if (treeDisplayArea.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this,
                     "Please first choose a folder to scan.",
@@ -145,7 +193,8 @@ public class MainFrontend extends JFrame {
             try {
                 Files.writeString(
                         fileToSave.toPath(),
-                        outputArea.getText()
+                        // TODO render tree to string
+                        "outputArea.getText()"
                 );
             } catch (IOException ex) {
                 showError(ex);
@@ -154,7 +203,7 @@ public class MainFrontend extends JFrame {
     }
 
     void clearOutput() {
-        if (outputArea.getText().isEmpty()) {
+        if (treeDisplayArea.isEmpty()) {
             return;
         }
         int choice = JOptionPane.showConfirmDialog(
@@ -164,7 +213,7 @@ public class MainFrontend extends JFrame {
                 JOptionPane.YES_NO_OPTION
         );
         if (choice == JOptionPane.YES_OPTION) {
-            outputArea.setText("");
+            treeDisplayArea.clear();
         }
     }
 
