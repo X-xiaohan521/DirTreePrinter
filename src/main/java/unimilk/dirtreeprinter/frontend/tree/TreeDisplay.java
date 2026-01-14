@@ -29,11 +29,11 @@ public class TreeDisplay extends JTree {
     }
 
     public boolean isEmpty() {
-        // TODO
-        return true;
+        return getModel().getRoot() == null;
     }
 
     public void clear() {
         setVisible(false);
+        setModel(new DefaultTreeModel(null));
     }
 }
