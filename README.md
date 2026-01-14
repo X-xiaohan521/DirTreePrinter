@@ -141,11 +141,16 @@ The executable JAR will be generated in: `target/`
 
 ## 📜 Changelog
 > 📌 Only the latest version is listed here. See `CHANGELOG.md` for older versions.
-### [1.0.0] - 2026-01-08
-> First Release
-### 🆕 What's New
-- Generating dir tree with simple clicks.
+### [1.1.0] - 2026-01-14
 
+### 🆕 What's New
+- 
+
+### 🌟 Improvements
+- Improved the logic of saving and loading config file.
+
+### 🛠 Bugfixes
+- Fixed errors when loading broken config file.
 ---
 
 ## 💡 Contributing
