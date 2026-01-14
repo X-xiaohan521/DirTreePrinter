@@ -28,7 +28,7 @@ public class YamlSettingsManager implements ISettingsManager {
     @Override
     public void loadSettings() {
         if (!Files.exists(configPath)) {
-            saveDefaultConfig();
+            saveDefaultSettings();
             return;
         }
 
@@ -37,7 +37,7 @@ public class YamlSettingsManager implements ISettingsManager {
             // load YAML file
             Map<String, Object> root = yaml.load(in);
             if (root == null) {
-                saveDefaultConfig();
+                saveDefaultSettings();
                 return;
             }
 
@@ -96,7 +96,8 @@ public class YamlSettingsManager implements ISettingsManager {
         }
     }
 
-    private void saveDefaultConfig() {
+    @Override
+    public void saveDefaultSettings() {
         try (InputStream in = getClass().getResourceAsStream("/config.yml")) {
             Files.createDirectories(configPath.getParent());
             assert in != null;

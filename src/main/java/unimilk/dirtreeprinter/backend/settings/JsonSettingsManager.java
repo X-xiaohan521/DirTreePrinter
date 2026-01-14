@@ -1,6 +1,7 @@
 package unimilk.dirtreeprinter.backend.settings;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import unimilk.dirtreeprinter.api.settings.ISettings;
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 
@@ -25,7 +26,14 @@ public class JsonSettingsManager implements ISettingsManager {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load settings.", e);
         }
-        this.settings = gson.fromJson(jsonStr, ISettings.class);
+        try {
+            this.settings = gson.fromJson(jsonStr, Settings.class);
+            if (this.settings.getFilterMode() == null) {
+                saveDefaultSettings();
+            }
+        } catch (JsonSyntaxException e) {
+            saveDefaultSettings();
+        }
     }
 
     @Override
@@ -52,6 +60,12 @@ public class JsonSettingsManager implements ISettingsManager {
     @Override
     public void applyAndSaveSettingsFrom(ISettings newSettings) {
         this.settings = newSettings;
+        saveSettings();
+    }
+
+    @Override
+    public void saveDefaultSettings() {
+        this.settings = new Settings();
         saveSettings();
     }
 }

@@ -90,4 +90,13 @@ public class Settings implements ISettings {
     public int hashCode() {
         return Objects.hash(getFilterMode(), getRules(), isModified());
     }
+
+    @Override
+    public String toString() {
+        return "Settings{" +
+                "filterMode=" + filterMode +
+                ", rules=" + rules +
+                ", modified=" + modified +
+                '}';
+    }
 }
