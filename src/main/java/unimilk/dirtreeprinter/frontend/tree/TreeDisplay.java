@@ -9,15 +9,16 @@ import javax.swing.tree.DefaultTreeModel;
 public class TreeDisplay extends JTree {
 
     public TreeDisplay() {
-        setVisible(false);
-        setModel(new DefaultTreeModel(null));
+        setModel(createEmptyModel());
+        setRootVisible(false);
+        setShowsRootHandles(true);
+        setCellRenderer(new CheckBoxTreeCellRenderer());
     }
 
     public void generateUiTree(TreeNode rootNode) {
         DefaultMutableTreeNode rootUiNode = generateUiTreeNode(rootNode);
         setModel(new DefaultTreeModel(rootUiNode));
-        setCellRenderer(new CheckBoxTreeCellRenderer());
-        setVisible(true);
+        setRootVisible(true);
     }
 
     private DefaultMutableTreeNode generateUiTreeNode(TreeNode backendNode) {
@@ -29,11 +30,16 @@ public class TreeDisplay extends JTree {
     }
 
     public boolean isEmpty() {
-        return getModel().getRoot() == null;
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) getModel().getRoot();
+        return root == null || root.getChildCount() == 0;
     }
 
     public void clear() {
-        setVisible(false);
-        setModel(new DefaultTreeModel(null));
+        setModel(createEmptyModel());
+        setRootVisible(false);
+    }
+
+    private static DefaultTreeModel createEmptyModel() {
+        return new DefaultTreeModel(new DefaultMutableTreeNode(null));
     }
 }
