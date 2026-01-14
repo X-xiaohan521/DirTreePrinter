@@ -182,5 +182,5 @@ copies or substantial portions of the Software.
 ---
 
 ## ⭐ Final Words
-### Thank you for using **PlayerTracker**!
+### Thank you for using **DirTreeGenerator**!
 If you find this tool helpful, please star ⭐ ths repository or leave your feedback — your support means a lot to me! 🚀

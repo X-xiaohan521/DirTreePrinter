@@ -18,7 +18,11 @@ public final class AppPaths {
         }
     }
 
-    public static Path getConfigFile() {
+    public static Path getYamlConfigFile() {
         return getConfigDir().resolve("config.yml");
+    }
+
+    public static Path getJsonConfigFile() {
+        return getConfigDir().resolve("config.json");
     }
 }

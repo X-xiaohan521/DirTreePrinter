@@ -1,8 +1,8 @@
 package unimilk.dirtreeprinter;
 
-import com.formdev.flatlaf.*;
+import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.backend.AppPaths;
-import unimilk.dirtreeprinter.backend.settings.SettingsManager;
+import unimilk.dirtreeprinter.backend.settings.YamlSettingsManager;
 import unimilk.dirtreeprinter.backend.tree.DirTreeGenerator;
 import unimilk.dirtreeprinter.frontend.MainFrontend;
 
@@ -18,10 +18,10 @@ public class DirTreeApp {
     public static void main(String[] args) {
 
         // load config path
-        Path configPath = AppPaths.getConfigFile();
+        Path configPath = AppPaths.getYamlConfigFile();
 
         // load settings
-        SettingsManager settingsManager = new SettingsManager(configPath);
+        ISettingsManager settingsManager = new YamlSettingsManager(configPath);
         settingsManager.loadSettings();
 
         // load frontend

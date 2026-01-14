@@ -16,12 +16,12 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
-public class SettingsManager implements ISettingsManager {
+public class YamlSettingsManager implements ISettingsManager {
 
     private final Path configPath;
     private ISettings settings;
 
-    public SettingsManager(Path configPath) {
+    public YamlSettingsManager(Path configPath) {
         this.configPath = configPath;
     }
 
@@ -68,7 +68,6 @@ public class SettingsManager implements ISettingsManager {
             }
             settings.markClean();
             this.settings = settings;
-            return;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load settings.", e);
         }

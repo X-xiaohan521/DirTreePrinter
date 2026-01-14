@@ -5,6 +5,7 @@ import unimilk.dirtreeprinter.api.settings.ISettings;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Settings implements ISettings {
 
@@ -76,5 +77,17 @@ public class Settings implements ISettings {
             newSettings.markClean();
         }
         return newSettings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Settings)) return false;
+        Settings settings = (Settings) o;
+        return isModified() == settings.isModified() && getFilterMode() == settings.getFilterMode() && Objects.equals(getRules(), settings.getRules());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFilterMode(), getRules(), isModified());
     }
 }
