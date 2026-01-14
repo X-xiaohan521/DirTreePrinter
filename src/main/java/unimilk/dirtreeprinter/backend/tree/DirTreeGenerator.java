@@ -3,6 +3,7 @@ package unimilk.dirtreeprinter.backend.tree;
 import unimilk.dirtreeprinter.api.settings.FilterMode;
 import unimilk.dirtreeprinter.api.settings.ISettings;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
+import unimilk.dirtreeprinter.api.tree.TreeNode;
 
 import java.io.IOException;
 import java.nio.file.*;
