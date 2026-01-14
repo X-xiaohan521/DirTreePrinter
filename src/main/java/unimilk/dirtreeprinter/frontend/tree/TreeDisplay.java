@@ -4,16 +4,20 @@ import unimilk.dirtreeprinter.api.tree.TreeNode;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
+import javax.swing.tree.DefaultTreeModel;
 
-public class TreeDisplayPanel extends JPanel {
+public class TreeDisplay extends JTree {
 
-    private JTree tree;
+    public TreeDisplay() {
+        setVisible(false);
+        setModel(new DefaultTreeModel(null));
+    }
 
-    public TreeDisplayPanel() {
-        setFont(new Font("Monospaced", Font.PLAIN, 13));
-        tree.setCellRenderer(new CheckBoxTreeCellRenderer());
-        add(tree);
+    public void generateUiTree(TreeNode rootNode) {
+        DefaultMutableTreeNode rootUiNode = generateUiTreeNode(rootNode);
+        setModel(new DefaultTreeModel(rootUiNode));
+        setCellRenderer(new CheckBoxTreeCellRenderer());
+        setVisible(true);
     }
 
     private DefaultMutableTreeNode generateUiTreeNode(TreeNode backendNode) {
@@ -24,16 +28,12 @@ public class TreeDisplayPanel extends JPanel {
         return uiNode;
     }
 
-    public void generateUiTree(TreeNode rootTreeNode) {
-        DefaultMutableTreeNode rootUiTreeNode = generateUiTreeNode(rootTreeNode);
-        this.tree = new JTree(rootUiTreeNode);
-    }
-
     public boolean isEmpty() {
-        return this.tree.equals(new JTree());
+        // TODO
+        return true;
     }
 
     public void clear() {
-        this.tree = new JTree();
+        setVisible(false);
     }
 }
