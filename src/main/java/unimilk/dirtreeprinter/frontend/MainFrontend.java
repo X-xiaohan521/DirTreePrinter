@@ -18,13 +18,13 @@ import java.util.Objects;
 
 public class MainFrontend extends JFrame {
 
-    private static MainFrontend mainFrontend;
-    private String rootFolder;
     private final ISettingsManager settingsManager;
     private final IDirTreeGenerator dirTreeGenerator;
     private final ITreeRenderer treeRenderer;
-    private final TreeDisplay treeDisplay;
+
+    private String rootFolder;
     private TreeNode rootNode;
+    private final TreeDisplay treeDisplay;
 
     public MainFrontend(
             ISettingsManager settingsManager,
@@ -48,10 +48,9 @@ public class MainFrontend extends JFrame {
 
         treeDisplay = new TreeDisplay();
 
-        add(new TopContainer(), BorderLayout.PAGE_START);
+        add(new TopContainer(this), BorderLayout.PAGE_START);
         add(new JScrollPane(treeDisplay), BorderLayout.CENTER);
 
-        mainFrontend = this;
     }
 
     public String getRootFolder() {
@@ -60,7 +59,10 @@ public class MainFrontend extends JFrame {
 
     private class TopContainer extends JPanel {
 
-        TopContainer() {
+        private final MainFrontend mainFrontend;
+
+        TopContainer(MainFrontend mainFrontend) {
+            this.mainFrontend = mainFrontend;
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
             add(new JSeparator(SwingConstants.HORIZONTAL));
             add(createToolBar());
