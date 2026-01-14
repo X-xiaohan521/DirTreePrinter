@@ -2,6 +2,7 @@ package unimilk.dirtreeprinter.frontend;
 
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
+import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
 import unimilk.dirtreeprinter.api.tree.TreeNode;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
@@ -21,11 +22,17 @@ public class MainFrontend extends JFrame {
     private String rootFolder;
     private final ISettingsManager settingsManager;
     private final IDirTreeGenerator dirTreeGenerator;
+    private final ITreeRenderer treeRenderer;
     private final TreeDisplay treeDisplay;
+    private TreeNode rootNode;
 
-    public MainFrontend(ISettingsManager settingsManager, IDirTreeGenerator dirTreeGenerator) {
+    public MainFrontend(
+            ISettingsManager settingsManager,
+            IDirTreeGenerator dirTreeGenerator,
+            ITreeRenderer treeRenderer) {
         this.settingsManager = settingsManager;
         this.dirTreeGenerator = dirTreeGenerator;
+        this.treeRenderer = treeRenderer;
 
         setTitle("Directory Tree Generator");
         List<Image> icons = List.of(
@@ -121,7 +128,7 @@ public class MainFrontend extends JFrame {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
             try {
-                TreeNode rootNode = dirTreeGenerator.generateTree(dir, settingsManager.getSettings());
+                rootNode = dirTreeGenerator.generateTree(dir, settingsManager.getSettings());
                 treeDisplay.generateUiTree(rootNode);
                 rootFolder = dir.getFileName().toString();
             } catch (IOException ex) {
@@ -148,8 +155,7 @@ public class MainFrontend extends JFrame {
             try {
                 Files.writeString(
                         fileToSave.toPath(),
-                        // TODO render tree to string
-                        "outputArea.getText()"
+                        treeRenderer.renderTree(rootNode)
                 );
             } catch (IOException ex) {
                 showError(ex);

@@ -1,17 +1,18 @@
 package unimilk.dirtreeprinter.backend.tree;
 
+import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
 import unimilk.dirtreeprinter.api.tree.TreeNode;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TreeRenderer {
-
-    private StringBuilder sb = new StringBuilder();
+public class TreeRenderer implements ITreeRenderer {
 
     public TreeRenderer() {}
 
+    @Override
     public String renderTree(TreeNode rootNode) {
+        StringBuilder sb = new StringBuilder();
         sb.append(rootNode.getPath().getFileName()).append("/\n");
         buildTree(rootNode, "", sb);
         return sb.toString();
