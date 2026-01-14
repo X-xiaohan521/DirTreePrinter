@@ -39,8 +39,9 @@ public class JsonSettingsManager implements ISettingsManager {
     @Override
     public void saveSettings() {
         Gson gson = new Gson();
-        String jsonStr = gson.toJson(this.settings);
         try (Writer writer = Files.newBufferedWriter(this.configPath)) {
+            this.settings.markClean();
+            String jsonStr = gson.toJson(this.settings);
             writer.write(jsonStr);
         } catch (IOException e) {
             throw new RuntimeException("Failed to save settings.", e);
@@ -55,6 +56,7 @@ public class JsonSettingsManager implements ISettingsManager {
     @Override
     public void applySettingsFrom(ISettings newSettings) {
         this.settings = newSettings;
+        this.settings.markClean();
     }
 
     @Override

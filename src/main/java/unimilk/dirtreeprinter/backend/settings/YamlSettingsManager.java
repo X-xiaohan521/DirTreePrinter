@@ -16,6 +16,10 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
+/**
+ * A YAML implementation of ISettingsManager.
+ * @deprecated  has been replaced by JsonSettingsManager
+ */
 public class YamlSettingsManager implements ISettingsManager {
 
     private final Path configPath;
