@@ -26,6 +26,7 @@ public class TreeRenderer implements ITreeRenderer {
         List<TreeNode> enabledChildren = node.getChildren()
                 .stream()
                 .filter(TreeNode::isEnabled)
+                .filter(TreeNode::isSelected)
                 .collect(Collectors.toList());
 
         for (int i = 0; i < enabledChildren.size(); i++) {
