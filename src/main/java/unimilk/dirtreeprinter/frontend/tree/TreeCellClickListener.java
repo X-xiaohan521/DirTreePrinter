@@ -57,7 +57,18 @@ public class TreeCellClickListener implements MouseListener {
     }
 
     private void uncheckChildren(DefaultMutableTreeNode uiNode) {
+        TreeNode backendNode = (TreeNode) uiNode.getUserObject();
+        backendNode.setSelected(false);
+        uncheckChildren(backendNode);
+    }
 
+    private void uncheckChildren(TreeNode rootNode) {
+        if (!rootNode.getChildren().isEmpty()) {
+            for (TreeNode child : rootNode.getChildren()) {
+                child.setSelected(false);
+                uncheckChildren(child);
+            }
+        }
     }
 
     @Override
