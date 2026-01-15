@@ -1,0 +1,69 @@
+package unimilk.dirtreeprinter.frontend.tree;
+
+import unimilk.dirtreeprinter.api.tree.TreeNode;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+public class TreeCellClickListener implements MouseListener {
+    private final JTree tree;
+
+    public TreeCellClickListener(JTree tree) {
+        this.tree = tree;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        int row = tree.getRowForLocation(e.getX(), e.getY());
+        if (row < 0) return;
+
+        TreePath path = tree.getPathForRow(row);
+        Rectangle bounds = tree.getRowBounds(row);
+
+        int checkboxWidth = 20;
+        if (e.getX() > bounds.x && e.getX() < bounds.x + checkboxWidth) {
+
+            DefaultMutableTreeNode uiNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            TreeNode backendNode = (TreeNode) uiNode.getUserObject();
+
+            if (!backendNode.isEnabled()) return;
+
+            boolean newState = !backendNode.isSelected();
+            backendNode.setSelected(newState);
+
+//            if (newState) {
+//                checkParents(uiNode);
+//            } else {
+//                uncheckChildren(uiNode);
+//            }
+
+            ((DefaultTreeModel) tree.getModel()).nodeChanged(uiNode);
+            tree.repaint();
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+}

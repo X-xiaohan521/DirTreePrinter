@@ -12,7 +12,10 @@ public class TreeDisplay extends JTree {
         setModel(createEmptyModel());
         setRootVisible(false);
         setShowsRootHandles(true);
+        setEditable(false);
+        setToggleClickCount(0);
         setCellRenderer(new CheckBoxTreeCellRenderer());
+        addMouseListener(new TreeCellClickListener(this));
     }
 
     public void generateUiTree(TreeNode rootNode) {

@@ -33,7 +33,7 @@ public class CheckBoxTreeCellRenderer extends JPanel implements TreeCellRenderer
         TreeNode backendNode = (TreeNode) uiNode.getUserObject();
 
         if (backendNode != null) {
-            checkBox.setSelected(backendNode.isSelected());
+            checkBox.setSelected(backendNode.isEnabled() && backendNode.isSelected());
             label.setText(" " + backendNode.getPath().getFileName().toString());
         }
 
