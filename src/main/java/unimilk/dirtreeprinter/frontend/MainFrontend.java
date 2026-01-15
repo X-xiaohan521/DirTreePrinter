@@ -43,6 +43,7 @@ public class MainFrontend extends JFrame {
         );
         setIconImages(icons);
         setSize(800, 600);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
