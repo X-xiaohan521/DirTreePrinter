@@ -2,6 +2,7 @@ package unimilk.dirtreeprinter.api.tree;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 public class TreeNode {
     private final Path path;
@@ -51,5 +52,17 @@ public class TreeNode {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof TreeNode)) return false;
+        TreeNode treeNode = (TreeNode) o;
+        return isEnabled() == treeNode.isEnabled() && isSelected() == treeNode.isSelected() && Objects.equals(getPath(), treeNode.getPath()) && Objects.equals(getChildren(), treeNode.getChildren());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPath(), getChildren(), isEnabled(), isSelected());
     }
 }

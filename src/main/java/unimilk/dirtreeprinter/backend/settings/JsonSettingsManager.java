@@ -1,9 +1,10 @@
 package unimilk.dirtreeprinter.backend.settings;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import unimilk.dirtreeprinter.api.settings.ISettings;
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
 import java.nio.file.Files;
