@@ -33,8 +33,16 @@ public class CheckBoxTreeCellRenderer extends JPanel implements TreeCellRenderer
         TreeNode backendNode = (TreeNode) uiNode.getUserObject();
 
         if (backendNode != null) {
-            checkBox.setSelected(backendNode.isEnabled() && backendNode.isSelected());
+            boolean isEnabled = backendNode.isEnabled();
+
+            checkBox.setSelected(isEnabled && backendNode.isSelected());
             label.setText(" " + backendNode.getPath().getFileName().toString());
+
+            if (!isEnabled) {
+                label.setForeground(UIManager.getColor("Label.disabledForeground"));
+            } else {
+                label.setForeground(UIManager.getColor("Tree.textForeground"));
+            }
         }
 
         return this;
