@@ -38,6 +38,7 @@ public class TreeCellClickListener implements MouseListener {
 
             if (newState) {
                 checkParents(uiNode);
+                checkChildren(uiNode);
             } else {
                 uncheckChildren(uiNode);
             }
@@ -67,6 +68,21 @@ public class TreeCellClickListener implements MouseListener {
             for (TreeNode child : rootNode.getChildren()) {
                 child.setSelected(false);
                 uncheckChildren(child);
+            }
+        }
+    }
+
+    private void checkChildren(DefaultMutableTreeNode uiNode) {
+        TreeNode backendNode = (TreeNode) uiNode.getUserObject();
+        backendNode.setSelected(true);
+        checkChildren(backendNode);
+    }
+
+    private void checkChildren(TreeNode rootNode) {
+        if (!rootNode.getChildren().isEmpty()) {
+            for (TreeNode child : rootNode.getChildren()) {
+                child.setSelected(true);
+                checkChildren(child);
             }
         }
     }
