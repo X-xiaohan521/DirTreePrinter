@@ -45,6 +45,10 @@ public class DirTreeGenerator implements IDirTreeGenerator {
                 if (isEnabled || childNode.isEnabled()) {
                     isEnabled = true;
                 }
+            } else {
+                if (!isEnabled) {
+                    childNode.setEnabled(false);
+                }
             }
         }
 
