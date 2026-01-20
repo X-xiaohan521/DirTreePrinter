@@ -25,6 +25,8 @@ public class MainFrontend extends JFrame {
     private TreeNode rootNode;
     private final TreeDisplay treeDisplay;
 
+    private final LoadingOverlayPanel loadingOverlay;
+
     public MainFrontend(
             ISettingsManager settingsManager,
             IDirTreeGenerator dirTreeGenerator,
@@ -51,6 +53,9 @@ public class MainFrontend extends JFrame {
         add(new TopContainer(this), BorderLayout.PAGE_START);
         add(new JScrollPane(treeDisplay), BorderLayout.CENTER);
 
+        loadingOverlay = new LoadingOverlayPanel();
+        setGlassPane(loadingOverlay);
+        loadingOverlay.setVisible(false);
     }
 
     private class TopContainer extends JPanel {
@@ -136,12 +141,16 @@ public class MainFrontend extends JFrame {
                     dirTreeGenerator,
                     dir,
                     settingsManager.getSettings(),
-                    () -> {},
+                    () -> loadingOverlay.setVisible(true),
                     rootNode -> {
+                        loadingOverlay.setVisible(false);
                         this.rootNode = rootNode;
                         treeDisplay.generateUiTree(this.rootNode);
                     },
-                    this::showError);
+                    ex -> {
+                        loadingOverlay.setVisible(false);
+                        showError(ex);
+                    });
             scanWorker.execute();
         }
     }
