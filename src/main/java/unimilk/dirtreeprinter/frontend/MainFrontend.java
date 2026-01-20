@@ -4,7 +4,6 @@ import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
 import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
 import unimilk.dirtreeprinter.api.tree.TreeNode;
-import unimilk.dirtreeprinter.frontend.export.ExportDialog;
 import unimilk.dirtreeprinter.frontend.export.ExportPreviewDialog;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
@@ -12,9 +11,7 @@ import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -159,7 +156,7 @@ public class MainFrontend extends JFrame {
             return;
         }
 
-        ExportPreviewDialog.showExportPreviewDialog(this);
+        ExportPreviewDialog.showExportPreviewDialog(this, treeRenderer, rootNode);
     }
 
     void clearOutput() {

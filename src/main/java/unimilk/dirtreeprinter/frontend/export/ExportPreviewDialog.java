@@ -1,5 +1,8 @@
 package unimilk.dirtreeprinter.frontend.export;
 
+import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
+import unimilk.dirtreeprinter.api.tree.TreeNode;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -30,8 +33,9 @@ public class ExportPreviewDialog extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public static void showExportPreviewDialog(JFrame owner) {
+    public static void showExportPreviewDialog(JFrame owner, ITreeRenderer treeRenderer, TreeNode rootNode) {
         ExportPreviewDialog exportPreviewDialog = new ExportPreviewDialog(owner);
+        exportPreviewDialog.displayPreview(treeRenderer, rootNode);
         exportPreviewDialog.setVisible(true);
     }
 
@@ -50,6 +54,10 @@ public class ExportPreviewDialog extends JDialog {
 //            }
 //        }
 //    }
+
+    private void displayPreview(ITreeRenderer treeRenderer, TreeNode rootNode) {
+        outputArea.setText(treeRenderer.renderTree(rootNode));
+    }
 
     private void onCancel() {
         dispose();
