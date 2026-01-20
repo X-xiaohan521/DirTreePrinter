@@ -4,6 +4,8 @@ import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
 import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
 import unimilk.dirtreeprinter.api.tree.TreeNode;
+import unimilk.dirtreeprinter.frontend.export.ExportDialog;
+import unimilk.dirtreeprinter.frontend.export.ExportPreviewDialog;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
 
@@ -85,7 +87,7 @@ public class MainFrontend extends JFrame {
             JButton clearButton = new JButton("Clear All");
 
             openFolderButton.addActionListener(e -> selectFolderToScan());
-            exportButton.addActionListener(e -> saveToFile());
+            exportButton.addActionListener(e -> exportToFile());
             clearButton.addActionListener(e -> clearOutput());
 
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -108,7 +110,7 @@ public class MainFrontend extends JFrame {
             JMenuItem exitItem = new JMenuItem("Exit");
 
             openItem.addActionListener(e -> selectFolderToScan());
-            exportItem.addActionListener(e -> saveToFile());
+            exportItem.addActionListener(e -> exportToFile());
             settingsItem.addActionListener(e -> SettingsDialog.openSettingsDialog(mainFrontend, settingsManager));
             exitItem.addActionListener(e -> System.exit(0));
 
@@ -146,30 +148,18 @@ public class MainFrontend extends JFrame {
         }
     }
 
-    void saveToFile() {
+    void exportToFile() {
         if (treeDisplay.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this,
                     "Please first choose a folder to scan.",
-                    "Nothing to Output",
+                    "Nothing to Export",
                     JOptionPane.WARNING_MESSAGE
             );
             return;
         }
 
-        SaveDialog saveDialog = new SaveDialog(this);
-
-        if (saveDialog.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = saveDialog.getSelectedFile();
-            try {
-                Files.writeString(
-                        fileToSave.toPath(),
-                        treeRenderer.renderTree(rootNode)
-                );
-            } catch (IOException ex) {
-                showError(ex);
-            }
-        }
+        ExportPreviewDialog.showExportPreviewDialog(this);
     }
 
     void clearOutput() {
