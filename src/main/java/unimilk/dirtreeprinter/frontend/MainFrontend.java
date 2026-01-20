@@ -80,17 +80,17 @@ public class MainFrontend extends JFrame {
         }
 
         JPanel createButtonPanel() {
-            JButton selectButton = new JButton("Select Folder");
-            JButton saveButton = new JButton("Save As...");
+            JButton openFolderButton = new JButton("Open Folder");
+            JButton exportButton = new JButton("Export");
             JButton clearButton = new JButton("Clear All");
 
-            selectButton.addActionListener(e -> selectFolderToScan());
-            saveButton.addActionListener(e -> saveToFile());
+            openFolderButton.addActionListener(e -> selectFolderToScan());
+            exportButton.addActionListener(e -> saveToFile());
             clearButton.addActionListener(e -> clearOutput());
 
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-            panel.add(selectButton);
-            panel.add(saveButton);
+            panel.add(openFolderButton);
+            panel.add(exportButton);
             panel.add(clearButton);
             return panel;
         }
@@ -101,17 +101,23 @@ public class MainFrontend extends JFrame {
             JPopupMenu menu = new JPopupMenu();
 
             JMenuItem openItem = new JMenuItem("Open Folder");
-            JMenuItem saveItem = new JMenuItem("Save As...");
+            JMenuItem saveProjectItem = new JMenuItem("Save Project");
+            JMenuItem saveAsItem = new JMenuItem("Save As...");
+            JMenuItem exportItem = new JMenuItem("Export");
             JMenuItem settingsItem = new JMenuItem("Settings...");
             JMenuItem exitItem = new JMenuItem("Exit");
 
             openItem.addActionListener(e -> selectFolderToScan());
-            saveItem.addActionListener(e -> saveToFile());
+            exportItem.addActionListener(e -> saveToFile());
             settingsItem.addActionListener(e -> SettingsDialog.openSettingsDialog(mainFrontend, settingsManager));
             exitItem.addActionListener(e -> System.exit(0));
 
             menu.add(openItem);
-            menu.add(saveItem);
+            menu.addSeparator();
+            menu.add(saveProjectItem);
+            menu.add(saveAsItem);
+            menu.addSeparator();
+            menu.add(exportItem);
             menu.addSeparator();
             menu.add(settingsItem);
             menu.addSeparator();
