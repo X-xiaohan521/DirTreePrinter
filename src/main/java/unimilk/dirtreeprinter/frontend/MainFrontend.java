@@ -53,10 +53,6 @@ public class MainFrontend extends JFrame {
 
     }
 
-    public String getRootFolder() {
-        return rootFolder;
-    }
-
     private class TopContainer extends JPanel {
 
         private final MainFrontend mainFrontend;
