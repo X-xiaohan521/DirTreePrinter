@@ -2,27 +2,36 @@ package unimilk.dirtreeprinter.frontend;
 
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
+import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
+import unimilk.dirtreeprinter.api.tree.TreeNode;
+import unimilk.dirtreeprinter.frontend.export.ExportPreviewDialog;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
+import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
 
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
 public class MainFrontend extends JFrame {
-    final JTextArea outputArea = new JTextArea();
-    private static MainFrontend mainFrontend;
-    private String rootFolder;
+
     private final ISettingsManager settingsManager;
     private final IDirTreeGenerator dirTreeGenerator;
+    private final ITreeRenderer treeRenderer;
 
-    public MainFrontend(ISettingsManager settingsManager, IDirTreeGenerator dirTreeGenerator) {
+    private String rootFolder;
+    private TreeNode rootNode;
+    private final TreeDisplay treeDisplay;
+
+    public MainFrontend(
+            ISettingsManager settingsManager,
+            IDirTreeGenerator dirTreeGenerator,
+            ITreeRenderer treeRenderer) {
         this.settingsManager = settingsManager;
         this.dirTreeGenerator = dirTreeGenerator;
+        this.treeRenderer = treeRenderer;
 
         setTitle("Directory Tree Generator");
         List<Image> icons = List.of(
@@ -33,25 +42,23 @@ public class MainFrontend extends JFrame {
         );
         setIconImages(icons);
         setSize(800, 600);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        outputArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        outputArea.setEditable(false);
+        treeDisplay = new TreeDisplay();
 
-        add(new TopContainer(), BorderLayout.PAGE_START);
-        add(new JScrollPane(outputArea), BorderLayout.CENTER);
+        add(new TopContainer(this), BorderLayout.PAGE_START);
+        add(new JScrollPane(treeDisplay), BorderLayout.CENTER);
 
-        mainFrontend = this;
-    }
-
-    public String getRootFolder() {
-        return rootFolder;
     }
 
     private class TopContainer extends JPanel {
 
-        TopContainer() {
+        private final MainFrontend mainFrontend;
+
+        TopContainer(MainFrontend mainFrontend) {
+            this.mainFrontend = mainFrontend;
             setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
             add(new JSeparator(SwingConstants.HORIZONTAL));
             add(createToolBar());
@@ -68,17 +75,17 @@ public class MainFrontend extends JFrame {
         }
 
         JPanel createButtonPanel() {
-            JButton selectButton = new JButton("Select Folder");
-            JButton saveButton = new JButton("Save As...");
+            JButton openFolderButton = new JButton("Open Folder");
+            JButton exportButton = new JButton("Export");
             JButton clearButton = new JButton("Clear All");
 
-            selectButton.addActionListener(e -> selectFolderToScan());
-            saveButton.addActionListener(e -> saveToFile());
+            openFolderButton.addActionListener(e -> selectFolderToScan());
+            exportButton.addActionListener(e -> exportToFile());
             clearButton.addActionListener(e -> clearOutput());
 
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-            panel.add(selectButton);
-            panel.add(saveButton);
+            panel.add(openFolderButton);
+            panel.add(exportButton);
             panel.add(clearButton);
             return panel;
         }
@@ -89,17 +96,23 @@ public class MainFrontend extends JFrame {
             JPopupMenu menu = new JPopupMenu();
 
             JMenuItem openItem = new JMenuItem("Open Folder");
-            JMenuItem saveItem = new JMenuItem("Save As...");
+            JMenuItem saveProjectItem = new JMenuItem("Save Project");
+            JMenuItem saveAsItem = new JMenuItem("Save As...");
+            JMenuItem exportItem = new JMenuItem("Export");
             JMenuItem settingsItem = new JMenuItem("Settings...");
             JMenuItem exitItem = new JMenuItem("Exit");
 
             openItem.addActionListener(e -> selectFolderToScan());
-            saveItem.addActionListener(e -> saveToFile());
+            exportItem.addActionListener(e -> exportToFile());
             settingsItem.addActionListener(e -> SettingsDialog.openSettingsDialog(mainFrontend, settingsManager));
             exitItem.addActionListener(e -> System.exit(0));
 
             menu.add(openItem);
-            menu.add(saveItem);
+            menu.addSeparator();
+            menu.add(saveProjectItem);
+            menu.add(saveAsItem);
+            menu.addSeparator();
+            menu.add(exportItem);
             menu.addSeparator();
             menu.add(settingsItem);
             menu.addSeparator();
@@ -119,7 +132,8 @@ public class MainFrontend extends JFrame {
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
             try {
-                outputArea.setText(dirTreeGenerator.generateTree(dir, settingsManager.getSettings()));
+                rootNode = dirTreeGenerator.generateTree(dir, settingsManager.getSettings());
+                treeDisplay.generateUiTree(rootNode);
                 rootFolder = dir.getFileName().toString();
             } catch (IOException ex) {
                 showError(ex);
@@ -127,34 +141,22 @@ public class MainFrontend extends JFrame {
         }
     }
 
-    void saveToFile() {
-        if (outputArea.getText().isEmpty()) {
+    void exportToFile() {
+        if (treeDisplay.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this,
                     "Please first choose a folder to scan.",
-                    "Nothing to Output",
+                    "Nothing to Export",
                     JOptionPane.WARNING_MESSAGE
             );
             return;
         }
 
-        SaveDialog saveDialog = new SaveDialog(this);
-
-        if (saveDialog.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = saveDialog.getSelectedFile();
-            try {
-                Files.writeString(
-                        fileToSave.toPath(),
-                        outputArea.getText()
-                );
-            } catch (IOException ex) {
-                showError(ex);
-            }
-        }
+        ExportPreviewDialog.showExportPreviewDialog(this, treeRenderer, rootNode, rootFolder);
     }
 
     void clearOutput() {
-        if (outputArea.getText().isEmpty()) {
+        if (treeDisplay.isEmpty()) {
             return;
         }
         int choice = JOptionPane.showConfirmDialog(
@@ -164,7 +166,7 @@ public class MainFrontend extends JFrame {
                 JOptionPane.YES_NO_OPTION
         );
         if (choice == JOptionPane.YES_OPTION) {
-            outputArea.setText("");
+            treeDisplay.clear();
         }
     }
 

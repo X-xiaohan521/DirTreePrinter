@@ -55,4 +55,5 @@ public interface ISettings {
      * @return   a new Settings instance that contains the same settings as the old
      */
     ISettings copy();
+
 }

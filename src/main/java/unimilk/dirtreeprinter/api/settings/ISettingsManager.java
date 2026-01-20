@@ -29,4 +29,9 @@ public interface ISettingsManager {
      * @param newSettings the new Settings to be applied and saved
      */
     void applyAndSaveSettingsFrom(ISettings newSettings);
+
+    /**
+     * Apply and save the default Settings.
+     */
+    void saveDefaultSettings();
 }

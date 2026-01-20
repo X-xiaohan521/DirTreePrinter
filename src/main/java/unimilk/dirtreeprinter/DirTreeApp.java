@@ -1,9 +1,10 @@
 package unimilk.dirtreeprinter;
 
-import com.formdev.flatlaf.*;
+import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.backend.AppPaths;
-import unimilk.dirtreeprinter.backend.settings.SettingsManager;
+import unimilk.dirtreeprinter.backend.settings.JsonSettingsManager;
 import unimilk.dirtreeprinter.backend.tree.DirTreeGenerator;
+import unimilk.dirtreeprinter.backend.tree.TreeRenderer;
 import unimilk.dirtreeprinter.frontend.MainFrontend;
 
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -18,15 +19,15 @@ public class DirTreeApp {
     public static void main(String[] args) {
 
         // load config path
-        Path configPath = AppPaths.getConfigFile();
+        Path configPath = AppPaths.getJsonConfigFile();
 
         // load settings
-        SettingsManager settingsManager = new SettingsManager(configPath);
+        ISettingsManager settingsManager = new JsonSettingsManager(configPath);
         settingsManager.loadSettings();
 
         // load frontend
         FlatDarkLaf.setup();
-        mainFrontend = new MainFrontend(settingsManager, new DirTreeGenerator());
+        mainFrontend = new MainFrontend(settingsManager, new DirTreeGenerator(), new TreeRenderer());
         SwingUtilities.invokeLater(() -> mainFrontend.setVisible(true));
     }
 }

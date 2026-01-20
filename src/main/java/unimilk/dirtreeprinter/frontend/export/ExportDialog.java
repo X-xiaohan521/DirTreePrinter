@@ -1,16 +1,16 @@
-package unimilk.dirtreeprinter.frontend;
+package unimilk.dirtreeprinter.frontend.export;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 
-public class SaveDialog extends JFileChooser {
-    public SaveDialog(MainFrontend mainFrontend) {
+public class ExportDialog extends JFileChooser {
+    public ExportDialog(String rootFolder) {
         String timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new java.util.Date());
-        this.setSelectedFile(new File("DirTree-" + mainFrontend.getRootFolder() + "-" + timeStamp + ".txt"));
+        setSelectedFile(new File("DirTree-" + rootFolder + "-" + timeStamp + ".txt"));
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
-        this.setFileFilter(filter);
-        this.setAcceptAllFileFilterUsed(false);
+        setFileFilter(filter);
+        setAcceptAllFileFilterUsed(false);
     }
 
     @Override

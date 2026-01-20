@@ -3,6 +3,7 @@ package unimilk.dirtreeprinter.backend.tree;
 import unimilk.dirtreeprinter.api.settings.FilterMode;
 import unimilk.dirtreeprinter.api.settings.ISettings;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
+import unimilk.dirtreeprinter.api.tree.TreeNode;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -18,17 +19,11 @@ public class DirTreeGenerator implements IDirTreeGenerator {
     }
 
     @Override
-    public String generateTree(Path root, ISettings settings) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(root.getFileName()).append("/\n");
-
-        TreeNode rootNode = generateTreeNode(root, settings);
-        buildTree(rootNode, "", sb);
-
-        return sb.toString();
+    public TreeNode generateTree(Path root, ISettings settings) throws IOException {
+        return generateTreeNode(root, settings);
     }
 
-    private TreeNode generateTreeNode(Path path, ISettings settings) throws IOException{
+    private TreeNode generateTreeNode(Path path, ISettings settings) throws IOException {
         List<TreeNode> childrenNodes = new ArrayList<>();
         boolean isEnabled = pathFilter(path, settings);
 
@@ -44,9 +39,17 @@ public class DirTreeGenerator implements IDirTreeGenerator {
         }
 
         for (Path childPath : childrenPaths) {
-            TreeNode childNode = generateTreeNode(childPath, settings);
-            childrenNodes.add(childNode);
-            if (settings.getFilterMode().equals(FilterMode.WHITELIST)) {
+            if (settings.getFilterMode().equals(FilterMode.BLACKLIST)) {
+                TreeNode childNode;
+                if (!isEnabled) {
+                    childNode = generateTreeNode(childPath, false);
+                } else {
+                    childNode = generateTreeNode(childPath, settings);
+                }
+                childrenNodes.add(childNode);
+            } else {
+                TreeNode childNode = generateTreeNode(childPath, settings);
+                childrenNodes.add(childNode);
                 if (isEnabled || childNode.isEnabled()) {
                     isEnabled = true;
                 }
@@ -56,30 +59,26 @@ public class DirTreeGenerator implements IDirTreeGenerator {
         return new TreeNode(path, childrenNodes, isEnabled);
     }
 
-    private void buildTree(TreeNode node, String prefix, StringBuilder sb) {
-        if (node.getChildren().isEmpty()) {
-            return;
+    private TreeNode generateTreeNode(Path path, boolean isEnabled) throws IOException {
+        List<TreeNode> childrenNodes = new ArrayList<>();
+
+        if (!Files.isDirectory(path)) {
+            return new TreeNode(path, new ArrayList<>(), isEnabled);
         }
 
-        List<TreeNode> enabledChildren = node.getChildren()
-                .stream()
-                .filter(TreeNode::isEnabled)
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < enabledChildren.size(); i++) {
-            TreeNode child = enabledChildren.get(i);
-            boolean isLast = (i == enabledChildren.size() - 1);
-
-            sb.append(prefix)
-              .append(isLast ?  "└── " : "├── ")
-              .append(child.getPath().getFileName())
-              .append("\n");
-
-            if (!child.getChildren().isEmpty()) {
-                String newPrefix = prefix + (isLast ? "    " : "│   ");
-                buildTree(child, newPrefix, sb);
-            }
+        List<Path> childrenPaths;
+        try (Stream<Path> stream = Files.list(path)) {
+            childrenPaths = stream
+                    .sorted(directoryFirst())
+                    .collect(Collectors.toList());
         }
+
+        for (Path childPath : childrenPaths) {
+            TreeNode childNode = generateTreeNode(childPath, isEnabled);
+            childrenNodes.add(childNode);
+        }
+
+        return new TreeNode(path, childrenNodes, isEnabled);
     }
 
     private Comparator<Path> directoryFirst() {

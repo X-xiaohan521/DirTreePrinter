@@ -16,19 +16,23 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
-public class SettingsManager implements ISettingsManager {
+/**
+ * A YAML implementation of ISettingsManager.
+ * @deprecated  has been replaced by JsonSettingsManager
+ */
+public class YamlSettingsManager implements ISettingsManager {
 
     private final Path configPath;
     private ISettings settings;
 
-    public SettingsManager(Path configPath) {
+    public YamlSettingsManager(Path configPath) {
         this.configPath = configPath;
     }
 
     @Override
     public void loadSettings() {
         if (!Files.exists(configPath)) {
-            saveDefaultConfig();
+            saveDefaultSettings();
             return;
         }
 
@@ -37,7 +41,7 @@ public class SettingsManager implements ISettingsManager {
             // load YAML file
             Map<String, Object> root = yaml.load(in);
             if (root == null) {
-                saveDefaultConfig();
+                saveDefaultSettings();
                 return;
             }
 
@@ -68,7 +72,6 @@ public class SettingsManager implements ISettingsManager {
             }
             settings.markClean();
             this.settings = settings;
-            return;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load settings.", e);
         }
@@ -97,7 +100,8 @@ public class SettingsManager implements ISettingsManager {
         }
     }
 
-    private void saveDefaultConfig() {
+    @Override
+    public void saveDefaultSettings() {
         try (InputStream in = getClass().getResourceAsStream("/config.yml")) {
             Files.createDirectories(configPath.getParent());
             assert in != null;

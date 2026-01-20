@@ -18,7 +18,16 @@ public final class AppPaths {
         }
     }
 
-    public static Path getConfigFile() {
+    /**
+     * Gets the Path of YAML config file.
+     * @return the Path of YAML config file
+     * @deprecated since the YamlSettingsManager has been deprecated, there's no need to get the YAML config path
+     */
+    public static Path getYamlConfigFile() {
         return getConfigDir().resolve("config.yml");
+    }
+
+    public static Path getJsonConfigFile() {
+        return getConfigDir().resolve("config.json");
     }
 }
