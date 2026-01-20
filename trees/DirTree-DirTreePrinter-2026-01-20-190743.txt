@@ -1,0 +1,61 @@
+DirTreePrinter/
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── unimilk
+│   │   │       └── dirtreeprinter
+│   │   │           ├── api
+│   │   │           │   ├── settings
+│   │   │           │   │   ├── FilterMode.java
+│   │   │           │   │   ├── ISettings.java
+│   │   │           │   │   └── ISettingsManager.java
+│   │   │           │   └── tree
+│   │   │           │       ├── IDirTreeGenerator.java
+│   │   │           │       ├── ITreeRenderer.java
+│   │   │           │       └── TreeNode.java
+│   │   │           ├── backend
+│   │   │           │   ├── settings
+│   │   │           │   │   ├── JsonSettingsManager.java
+│   │   │           │   │   ├── Settings.java
+│   │   │           │   │   └── YamlSettingsManager.java
+│   │   │           │   ├── tree
+│   │   │           │   │   ├── DirTreeGenerator.java
+│   │   │           │   │   └── TreeRenderer.java
+│   │   │           │   └── AppPaths.java
+│   │   │           ├── frontend
+│   │   │           │   ├── export
+│   │   │           │   │   ├── ExportDialog.java
+│   │   │           │   │   └── ExportPreviewDialog.java
+│   │   │           │   ├── settings
+│   │   │           │   │   ├── IgnoreRulesCard.java
+│   │   │           │   │   ├── SettingsCards.java
+│   │   │           │   │   └── SettingsDialog.java
+│   │   │           │   ├── tree
+│   │   │           │   │   ├── CheckBoxTreeCellEditor.java
+│   │   │           │   │   ├── CheckBoxTreeCellRenderer.java
+│   │   │           │   │   ├── TreeCellClickListener.java
+│   │   │           │   │   └── TreeDisplay.java
+│   │   │           │   └── MainFrontend.java
+│   │   │           └── DirTreeApp.java
+│   │   └── resources
+│   │       ├── icons
+│   │       │   ├── icon.ico
+│   │       │   ├── icon16.png
+│   │       │   ├── icon32.png
+│   │       │   ├── icon48.png
+│   │       │   └── icon64.png
+│   │       └── config.yml
+│   └── test
+│       └── java
+│           └── unimilk
+│               └── dirtreeprinter
+│                   ├── backend
+│                   │   └── settings
+│                   │       ├── JsonSettingsManagerTest.java
+│                   │       └── SettingsTest.java
+│                   └── frontend
+│                       └── tree
+│                           └── CheckBoxTreeCellRendererTest.java
+├── .gitignore
+├── pom.xml
+└── README.md
