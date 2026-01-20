@@ -156,7 +156,7 @@ public class MainFrontend extends JFrame {
             return;
         }
 
-        ExportPreviewDialog.showExportPreviewDialog(this, treeRenderer, rootNode);
+        ExportPreviewDialog.showExportPreviewDialog(this, treeRenderer, rootNode, rootFolder);
     }
 
     void clearOutput() {

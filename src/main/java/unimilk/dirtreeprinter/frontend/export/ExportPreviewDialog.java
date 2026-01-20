@@ -11,6 +11,7 @@ import java.nio.file.Files;
 
 public class ExportPreviewDialog extends JDialog {
     private final JTextArea outputArea = new JTextArea();
+    private String rootFolder;
 
     private ExportPreviewDialog(JFrame owner) {
         super(owner, true);
@@ -28,32 +29,35 @@ public class ExportPreviewDialog extends JDialog {
         JButton exportButton = new JButton("Export");
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> onCancel());
+        exportButton.addActionListener(e -> onExport());
         buttonPanel.add(cancelButton);
         buttonPanel.add(exportButton);
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public static void showExportPreviewDialog(JFrame owner, ITreeRenderer treeRenderer, TreeNode rootNode) {
+    public static void showExportPreviewDialog(JFrame owner, ITreeRenderer treeRenderer, TreeNode rootNode, String rootFolder) {
         ExportPreviewDialog exportPreviewDialog = new ExportPreviewDialog(owner);
+        exportPreviewDialog.rootFolder = rootFolder;
         exportPreviewDialog.displayPreview(treeRenderer, rootNode);
         exportPreviewDialog.setVisible(true);
     }
 
-//    private void onExport() {
-//        ExportDialog exportDialog = new ExportDialog(this);
-//
-//        if (exportDialog.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-//            File fileToSave = exportDialog.getSelectedFile();
-//            try {
-//                Files.writeString(
-//                        fileToSave.toPath(),
-//                        treeRenderer.renderTree(rootNode)
-//                );
-//            } catch (IOException ex) {
-//                showError(ex);
-//            }
-//        }
-//    }
+    private void onExport() {
+        ExportDialog exportDialog = new ExportDialog(rootFolder);
+
+        if (exportDialog.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = exportDialog.getSelectedFile();
+            try {
+                Files.writeString(
+                        fileToSave.toPath(),
+                        outputArea.getText()
+                );
+                dispose();
+            } catch (IOException ex) {
+                showError(ex);
+            }
+        }
+    }
 
     private void displayPreview(ITreeRenderer treeRenderer, TreeNode rootNode) {
         outputArea.setText(treeRenderer.renderTree(rootNode));
@@ -61,5 +65,14 @@ public class ExportPreviewDialog extends JDialog {
 
     private void onCancel() {
         dispose();
+    }
+
+    void showError(Exception ex) {
+        JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 }
