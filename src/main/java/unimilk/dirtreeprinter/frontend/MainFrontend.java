@@ -7,11 +7,11 @@ import unimilk.dirtreeprinter.api.tree.TreeNode;
 import unimilk.dirtreeprinter.frontend.export.ExportPreviewDialog;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
+import unimilk.dirtreeprinter.frontend.worker.ScanWorker;
 
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -131,13 +131,18 @@ public class MainFrontend extends JFrame {
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
-            try {
-                rootNode = dirTreeGenerator.generateTree(dir, settingsManager.getSettings());
-                treeDisplay.generateUiTree(rootNode);
-                rootFolder = dir.getFileName().toString();
-            } catch (IOException ex) {
-                showError(ex);
-            }
+            rootFolder = dir.getFileName().toString();
+            ScanWorker scanWorker = new ScanWorker(
+                    dirTreeGenerator,
+                    dir,
+                    settingsManager.getSettings(),
+                    () -> {},
+                    rootNode -> {
+                        this.rootNode = rootNode;
+                        treeDisplay.generateUiTree(this.rootNode);
+                    },
+                    this::showError);
+            scanWorker.execute();
         }
     }
 
