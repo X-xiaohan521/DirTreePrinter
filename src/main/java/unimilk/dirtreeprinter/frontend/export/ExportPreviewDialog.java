@@ -34,6 +34,9 @@ public class ExportPreviewDialog extends JDialog {
         buttonPanel.add(cancelButton);
         buttonPanel.add(exportButton);
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // set exportButton highlighted
+        getRootPane().setDefaultButton(exportButton);
     }
 
     public static void showExportPreviewDialog(JFrame owner, ITreeRenderer treeRenderer, TreeNode rootNode, String rootFolder) {
