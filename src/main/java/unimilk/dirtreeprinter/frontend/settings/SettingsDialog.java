@@ -53,6 +53,9 @@ public class SettingsDialog extends JDialog {
         splitPane.setResizeWeight(0);
         splitPane.setBorder(null);
         add(splitPane, BorderLayout.CENTER);
+
+        // set cancelButton highlighted
+        getRootPane().setDefaultButton(cancelButton);
     }
 
     private JList<String> createCategoryList() {

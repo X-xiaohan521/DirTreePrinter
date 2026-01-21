@@ -177,7 +177,7 @@ The executable JAR will be generated in: `target/`
 - 
 
 ### 🌟 Improvements
-- 
+- Polished UI/UX experience.
 
 ### 🛠 Bugfixes
 - 

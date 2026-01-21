@@ -26,7 +26,7 @@ public class LoadingOverlayPanel extends JPanel {
         // add progress bar
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
-        progressBar.setPreferredSize(new Dimension(220, 18));
+        progressBar.setPreferredSize(new Dimension(220, 5));
         gbc.gridy = 1;
         gbc.insets = new Insets(10, 0, 0, 0);
         add(progressBar, gbc);
