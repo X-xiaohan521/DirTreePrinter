@@ -169,18 +169,18 @@ The executable JAR will be generated in: `target/`
 
 ## 📜 Changelog
 > 📌 Only the latest version is listed here. See `CHANGELOG.md` for older versions.
-### [2.0.0] - 2026-01-20
+### [2.1.0] - 2026-01-21
 
 ### 🆕 What's New
-- Added checkboxs for every tree node scanned, which take into effect when exporting to file.
-- Added a preview window before exporting.
+- Added a loading animation when scanning folders.
+- Added a right-click menu, allowing sending to ignore rules or openning in file-explorer.
+- 
 
 ### 🌟 Improvements
-- Improved the logic of saving and loading config file.
-- Display the window at the middle of the screen, rather than the top-left corner.
+- 
 
 ### 🛠 Bugfixes
-- Fixed errors when loading broken config file.
+- 
 ---
 
 ## 💡 Contributing
