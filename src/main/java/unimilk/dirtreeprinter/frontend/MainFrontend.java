@@ -65,17 +65,19 @@ public class MainFrontend extends JFrame {
 
         TopContainer(MainFrontend mainFrontend) {
             this.mainFrontend = mainFrontend;
-            setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-            add(new JSeparator(SwingConstants.HORIZONTAL));
-            add(createToolBar());
-            add(createButtonPanel());
+            setLayout(new BorderLayout());
+            add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.NORTH);
+            add(createToolBar(), BorderLayout.CENTER);
+            add(createButtonPanel(), BorderLayout.SOUTH);
         }
 
         JToolBar createToolBar() {
             JToolBar toolBar = new JToolBar();
-            toolBar.setLayout(new BorderLayout());
+            toolBar.setFloatable(false);
+            toolBar.setRollover(true);
 
-            toolBar.add(createFileButton(), BorderLayout.LINE_START);
+            toolBar.add(createFileButton());
+            toolBar.add(createEditButton());
 
             return toolBar;
         }
@@ -84,20 +86,33 @@ public class MainFrontend extends JFrame {
             JButton openFolderButton = new JButton("Open Folder");
             JButton exportButton = new JButton("Export");
             JButton clearButton = new JButton("Clear All");
+            JButton rescanButton = new JButton("Rescan");
 
             openFolderButton.addActionListener(e -> selectFolderToScan());
             exportButton.addActionListener(e -> exportToFile());
             clearButton.addActionListener(e -> clearOutput());
 
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-            panel.add(openFolderButton);
-            panel.add(exportButton);
-            panel.add(clearButton);
+            // left group
+            JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+            leftPanel.add(openFolderButton);
+            leftPanel.add(exportButton);
+            leftPanel.add(clearButton);
+
+            // right group
+            JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+            rightPanel.add(rescanButton);
+
+            // build the whole row
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(leftPanel, BorderLayout.WEST);
+            panel.add(rightPanel, BorderLayout.EAST);
+
             return panel;
         }
 
+
         JButton createFileButton() {
-            JButton fileButton = new JButton("File");
+            JButton fileButton = new JButton(" File ");
 
             JPopupMenu menu = new JPopupMenu();
 
@@ -129,6 +144,20 @@ public class MainFrontend extends JFrame {
             return fileButton;
         }
 
+        JButton createEditButton() {
+            JButton editButton = new JButton(" Edit ");
+
+            JPopupMenu menu = new JPopupMenu();
+
+            JMenuItem undoItem = new JMenuItem("Undo");
+            JMenuItem redoItem = new JMenuItem("Redo");
+
+            menu.add(undoItem);
+            menu.add(redoItem);
+
+            editButton.addActionListener(e -> menu.show(editButton, 0, editButton.getHeight()));
+            return editButton;
+        }
     }
 
     void selectFolderToScan() {
