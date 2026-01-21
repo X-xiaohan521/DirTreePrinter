@@ -1,5 +1,6 @@
 package unimilk.dirtreeprinter.frontend;
 
+import unimilk.dirtreeprinter.api.settings.ISettings;
 import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.IDirTreeGenerator;
 import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
@@ -49,6 +50,13 @@ public class MainFrontend extends JFrame {
         setLayout(new BorderLayout());
 
         treeDisplay = new TreeDisplay();
+        treeDisplay.setIgnoreHandler(node -> {
+            String name = node.getPath().getFileName().toString();
+
+            ISettings settingsCopy = settingsManager.getSettings().copy();
+            settingsCopy.addRule(name);
+            settingsManager.applyAndSaveSettingsFrom(settingsCopy);
+        });
 
         add(new TopContainer(this), BorderLayout.PAGE_START);
         add(new JScrollPane(treeDisplay), BorderLayout.CENTER);

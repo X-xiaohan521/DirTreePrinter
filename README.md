@@ -147,7 +147,7 @@ DirTreePrinter/
 * Java
 * Swing
 * FlatLaf
-* SnakeYAML
+* Gson
 * Maven
 * exe4j
 

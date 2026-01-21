@@ -5,8 +5,13 @@ import unimilk.dirtreeprinter.api.tree.TreeNode;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.event.MouseEvent;
+
+import java.util.function.Consumer;
 
 public class TreeDisplay extends JTree {
+
+    private Consumer<TreeNode> ignoreHandler;
 
     public TreeDisplay() {
         setModel(createEmptyModel());
@@ -15,7 +20,10 @@ public class TreeDisplay extends JTree {
         setEditable(false);
         setToggleClickCount(0);
         setCellRenderer(new CheckBoxTreeCellRenderer());
-        addMouseListener(new TreeCellClickListener(this));
+
+        TreeCellClickListener treeCellClickListener = new TreeCellClickListener(this);
+        treeCellClickListener.setPopupMenuHandler(this::showPopupMenu);
+        addMouseListener(treeCellClickListener);
     }
 
     public void generateUiTree(TreeNode rootNode) {
@@ -30,6 +38,22 @@ public class TreeDisplay extends JTree {
             uiNode.add(generateUiTreeNode(child));
         }
         return uiNode;
+    }
+
+    public void setIgnoreHandler(Consumer<TreeNode> ignoreHandler) {
+        this.ignoreHandler = ignoreHandler;
+    }
+
+    private void showPopupMenu(MouseEvent e, TreeNode node) {
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem ignoreItem = new JMenuItem("Add to ignore rules");
+        ignoreItem.addActionListener(ev -> {
+            if (ignoreHandler != null) {
+                ignoreHandler.accept(node);
+            }
+        });
+        menu.add(ignoreItem);
+        menu.show(this, e.getX(), e.getY());
     }
 
     public boolean isEmpty() {
