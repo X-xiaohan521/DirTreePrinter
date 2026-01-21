@@ -12,12 +12,14 @@ import java.awt.event.MouseEvent;
 public class RightClickMenu extends JPopupMenu {
 
     private final ISettingsManager settingsManager;
+    private final JMenuItem openItem = new JMenuItem("Open in file explorer");
     private final JMenuItem ignoreItem = new JMenuItem("Add to ignore rules");
     private TreeNode node;
 
     public RightClickMenu(ISettingsManager settingsManager) {
         this.settingsManager = settingsManager;
         ignoreItem.addActionListener(e -> onAddIgnore());
+        add(openItem);
         add(ignoreItem);
     }
 
