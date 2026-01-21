@@ -95,10 +95,17 @@ public class TreeCellClickListener implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            if (showPopupMenu != null) {
-                handleRightClick(e, showPopupMenu);
-            }
+        maybeShowPopup(e);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e) {
+        if (e.isPopupTrigger() && showPopupMenu != null) {
+            handleRightClick(e, showPopupMenu);
         }
     }
 
@@ -112,11 +119,6 @@ public class TreeCellClickListener implements MouseListener {
         Object userObject = uiNode.getUserObject();
         if (!(userObject instanceof TreeNode)) return;
         showPopupMenu.accept(e, (TreeNode) userObject);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
     }
 
     @Override
