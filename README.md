@@ -180,7 +180,8 @@ The executable JAR will be generated in: `target/`
 - Polished UI/UX experience.
 
 ### 🛠 Bugfixes
-- 
+- Addressed frontend frozen issue when scanning tasks are performed.
+
 ---
 
 ## 💡 Contributing
