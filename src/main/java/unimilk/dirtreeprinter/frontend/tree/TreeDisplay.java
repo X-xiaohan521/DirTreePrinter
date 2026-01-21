@@ -1,17 +1,16 @@
 package unimilk.dirtreeprinter.frontend.tree;
 
 import unimilk.dirtreeprinter.api.tree.TreeNode;
+import unimilk.dirtreeprinter.frontend.RightClickMenu;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.MouseEvent;
 
-import java.util.function.Consumer;
-
 public class TreeDisplay extends JTree {
 
-    private Consumer<TreeNode> ignoreHandler;
+    private RightClickMenu rightClickMenu;
 
     public TreeDisplay() {
         setModel(createEmptyModel());
@@ -40,20 +39,14 @@ public class TreeDisplay extends JTree {
         return uiNode;
     }
 
-    public void setIgnoreHandler(Consumer<TreeNode> ignoreHandler) {
-        this.ignoreHandler = ignoreHandler;
+    public void setRightClickMenu(RightClickMenu rightClickMenu) {
+        this.rightClickMenu = rightClickMenu;
     }
 
-    private void showPopupMenu(MouseEvent e, TreeNode node) {
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem ignoreItem = new JMenuItem("Add to ignore rules");
-        ignoreItem.addActionListener(ev -> {
-            if (ignoreHandler != null) {
-                ignoreHandler.accept(node);
-            }
-        });
-        menu.add(ignoreItem);
-        menu.show(this, e.getX(), e.getY());
+    private void showPopupMenu(MouseEvent e, DefaultMutableTreeNode uiNode) {
+        if (rightClickMenu != null) {
+            rightClickMenu.showFor(this, e, uiNode);
+        }
     }
 
     public boolean isEmpty() {
