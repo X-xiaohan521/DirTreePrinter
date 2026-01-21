@@ -2,7 +2,6 @@ package unimilk.dirtreeprinter.frontend.export;
 
 import unimilk.dirtreeprinter.api.tree.ITreeRenderer;
 import unimilk.dirtreeprinter.api.tree.TreeNode;
-import unimilk.dirtreeprinter.frontend.MainFrontend;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +54,7 @@ public class ExportPreviewDialog extends JDialog {
                 );
                 dispose();
             } catch (IOException ex) {
-                MainFrontend.showError(this, ex);
+                showError(ex);
             }
         }
     }
@@ -66,5 +65,14 @@ public class ExportPreviewDialog extends JDialog {
 
     private void onCancel() {
         dispose();
+    }
+
+    void showError(Exception ex) {
+        JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 }

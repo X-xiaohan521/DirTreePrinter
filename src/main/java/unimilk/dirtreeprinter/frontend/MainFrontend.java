@@ -151,7 +151,7 @@ public class MainFrontend extends JFrame {
                     ex -> {
                         loadingOverlay.setVisible(false);
                         setGlassPane(new JRootPane());
-                        showError(this, ex);
+                        showError(ex);
                     });
             scanWorker.execute();
         }
@@ -186,18 +186,9 @@ public class MainFrontend extends JFrame {
         }
     }
 
-    public static void showError(Component parent, String message) {
+    void showError(Exception ex) {
         JOptionPane.showMessageDialog(
-                parent,
-                message,
-                "Error",
-                JOptionPane.ERROR_MESSAGE
-        );
-    }
-
-    public static void showError(Component parent, Exception ex) {
-        JOptionPane.showMessageDialog(
-                parent,
+                this,
                 ex.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE
