@@ -174,7 +174,7 @@ The executable JAR will be generated in: `target/`
 ### 🆕 What's New
 - Added a loading animation when scanning folders.
 - Added a right-click menu, allowing sending to ignore rules or openning in file-explorer.
-- 
+- Added a rescan button for rescanning the root folder.
 
 ### 🌟 Improvements
 - Polished UI/UX experience.

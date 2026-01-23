@@ -42,6 +42,14 @@ public class Settings implements ISettings {
     }
 
     @Override
+    public void addRule(String rule, int index) {
+        if (!rules.contains(rule)) {
+            rules.add(index, rule);
+            modified = true;
+        }
+    }
+
+    @Override
     public boolean removeRule(String rule) {
         if (rules.remove(rule)) {
             modified = true;
@@ -49,6 +57,12 @@ public class Settings implements ISettings {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String removeRule(int index) {
+        modified = true;
+        return rules.remove(index);
     }
 
     @Override

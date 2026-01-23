@@ -28,11 +28,25 @@ public interface ISettings {
     void addRule(String rule);
 
     /**
+     * Add a filter rule to the rule list at a specific index.
+     * @param rule the rule to be added
+     * @param index the index where the rule should be added
+     */
+    void addRule(String rule, int index);
+
+    /**
      * Remove a filter rule from the rules list.
      * @param rule  the rule to be removed
      * @return <code>true</code> if the rule is removed successfully; <code>false</code> otherwise.
      */
     boolean removeRule(String rule);
+
+    /**
+     * Remove a filter rule from the rules list by its index.
+     * @param index the index of the rule to be moved
+     * @return the moved rule
+     */
+    String removeRule(int index);
 
     /**
      * Get the modification status of the settings.
