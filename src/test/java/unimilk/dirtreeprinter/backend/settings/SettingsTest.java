@@ -24,6 +24,31 @@ class SettingsTest {
     }
 
     @Test
+    void insertRulesShouldWork() {
+        ISettings actualSettings = new Settings();
+        actualSettings.addRule(".idea");
+        actualSettings.addRule(".vscode");
+        actualSettings.addRule("mc", 1);
+        assertTrue(actualSettings.isModified());
+
+        ISettings expectedSettings = new Settings();
+        expectedSettings.addRule(".idea");
+        expectedSettings.addRule("mc");
+        expectedSettings.addRule(".vscode");
+
+        assertEquals(expectedSettings, actualSettings);
+    }
+
+    @Test
+    void removeRuleByIndexShouldWork() {
+        ISettings actualSettings = new Settings();
+        actualSettings.addRule(".idea");
+        actualSettings.addRule(".vscode");
+        String removedRule = actualSettings.removeRule(0);
+        assertEquals(".idea", removedRule);
+    }
+
+    @Test
     void copiedSettingsShouldEqualOrigin() {
         ISettings originalSettings = new Settings();
         originalSettings.addRule("java");
