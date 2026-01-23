@@ -91,6 +91,7 @@ public class MainFrontend extends JFrame {
             openFolderButton.addActionListener(e -> selectFolderToScan());
             exportButton.addActionListener(e -> exportToFile());
             clearButton.addActionListener(e -> clearOutput());
+            rescanButton.addActionListener(e -> onRescan());
 
             // left group
             JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -160,30 +161,47 @@ public class MainFrontend extends JFrame {
         }
     }
 
+    private void onRescan() {
+        if (treeDisplay.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please first choose a folder to scan.",
+                    "Nothing to Rescan",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        startScanning(rootNode.getPath());
+    }
+
     void selectFolderToScan() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
-            rootFolder = dir.getFileName().toString();
-            ScanWorker scanWorker = new ScanWorker(
-                    dirTreeGenerator,
-                    dir,
-                    settingsManager.getSettings(),
-                    () -> loadingOverlay.setVisible(true),
-                    rootNode -> {
-                        loadingOverlay.setVisible(false);
-                        this.rootNode = rootNode;
-                        treeDisplay.generateUiTree(this.rootNode);
-                    },
-                    ex -> {
-                        loadingOverlay.setVisible(false);
-                        setGlassPane(new JRootPane());
-                        showError(this, ex);
-                    });
-            scanWorker.execute();
+            startScanning(dir);
         }
+    }
+
+    private void startScanning(Path dir) {
+        rootFolder = dir.getFileName().toString();
+        ScanWorker scanWorker = new ScanWorker(
+                dirTreeGenerator,
+                dir,
+                settingsManager.getSettings(),
+                () -> loadingOverlay.setVisible(true),
+                rootNode -> {
+                    loadingOverlay.setVisible(false);
+                    this.rootNode = rootNode;
+                    treeDisplay.generateUiTree(this.rootNode);
+                },
+                ex -> {
+                    loadingOverlay.setVisible(false);
+                    setGlassPane(new JRootPane());
+                    showError(this, ex);
+                });
+        scanWorker.execute();
     }
 
     void exportToFile() {
