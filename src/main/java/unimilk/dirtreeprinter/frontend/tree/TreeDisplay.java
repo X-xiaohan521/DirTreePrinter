@@ -6,6 +6,7 @@ import unimilk.dirtreeprinter.frontend.RightClickMenu;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 
 public class TreeDisplay extends JTree {
@@ -36,6 +37,7 @@ public class TreeDisplay extends JTree {
         for (TreeNode child : backendNode.getChildren()) {
             uiNode.add(generateUiTreeNode(child));
         }
+        this.setExpandedState(new TreePath(uiNode.getPath()), true);
         return uiNode;
     }
 

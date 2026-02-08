@@ -9,12 +9,22 @@ import java.util.Objects;
 
 public class Settings implements ISettings {
 
+    private int defaultExpandedLayers;
     private FilterMode filterMode;
     private final List<String> rules = new ArrayList<>();
     private boolean modified = false;
 
     public Settings() {
         this.filterMode = FilterMode.BLACKLIST;
+        this.defaultExpandedLayers = 1;
+    }
+
+    public int getDefaultExpandedLayers() {
+        return defaultExpandedLayers;
+    }
+
+    public void setDefaultExpandedLayers(int defaultExpandedLayers) {
+        this.defaultExpandedLayers = defaultExpandedLayers;
     }
 
     @Override

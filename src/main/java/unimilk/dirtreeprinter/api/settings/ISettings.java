@@ -3,6 +3,19 @@ package unimilk.dirtreeprinter.api.settings;
 import java.util.List;
 
 public interface ISettings {
+
+    /**
+     * Get the default expanded layers currently.
+     * @return the default expanded layer counts
+     */
+    int getDefaultExpandedLayers();
+
+    /**
+     * Set the default expanded layers.
+     * @param defaultExpandedLayers the default expanded layer counts to be set
+     */
+    void setDefaultExpandedLayers(int defaultExpandedLayers);
+
     /**
      * Get the filter mode used currently.
      * @return FilterMode: BLACKLIST / WHITELIST
