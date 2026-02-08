@@ -48,7 +48,7 @@ public class MainFrontend extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        treeDisplay = new TreeDisplay();
+        treeDisplay = new TreeDisplay(settingsManager);
         treeDisplay.setRightClickMenu(new RightClickMenu(settingsManager));
 
         add(new TopContainer(this), BorderLayout.PAGE_START);

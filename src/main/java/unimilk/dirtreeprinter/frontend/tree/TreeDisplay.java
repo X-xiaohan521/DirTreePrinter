@@ -1,5 +1,6 @@
 package unimilk.dirtreeprinter.frontend.tree;
 
+import unimilk.dirtreeprinter.api.settings.ISettingsManager;
 import unimilk.dirtreeprinter.api.tree.TreeNode;
 import unimilk.dirtreeprinter.frontend.RightClickMenu;
 
@@ -8,12 +9,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TreeDisplay extends JTree {
 
+    private final ISettingsManager settingsManager;
     private RightClickMenu rightClickMenu;
+    private final List<TreePath> pathsToExpand = new ArrayList<>();
 
-    public TreeDisplay() {
+    public TreeDisplay(ISettingsManager settingsManager) {
+        this.settingsManager = settingsManager;
+
         setModel(createEmptyModel());
         setRootVisible(false);
         setShowsRootHandles(true);
@@ -27,17 +34,26 @@ public class TreeDisplay extends JTree {
     }
 
     public void generateUiTree(TreeNode rootNode) {
-        DefaultMutableTreeNode rootUiNode = generateUiTreeNode(rootNode);
+        DefaultMutableTreeNode rootUiNode = generateUiTreeNode(rootNode, 0);
         setModel(new DefaultTreeModel(rootUiNode));
+        for (TreePath path : pathsToExpand) {
+            expandPath(path);
+        }
+        pathsToExpand.clear();
         setRootVisible(true);
     }
 
-    private DefaultMutableTreeNode generateUiTreeNode(TreeNode backendNode) {
+    private DefaultMutableTreeNode generateUiTreeNode(TreeNode backendNode, int depth) {
         DefaultMutableTreeNode uiNode = new DefaultMutableTreeNode(backendNode);
-        for (TreeNode child : backendNode.getChildren()) {
-            uiNode.add(generateUiTreeNode(child));
+
+        if (depth <= settingsManager.getSettings().getDefaultExpandedLayers()) {
+            pathsToExpand.add(new TreePath(uiNode.getPath()));
         }
-        this.setExpandedState(new TreePath(uiNode.getPath()), true);
+
+        for (TreeNode child : backendNode.getChildren()) {
+            uiNode.add(generateUiTreeNode(child, depth - 1));
+        }
+
         return uiNode;
     }
 

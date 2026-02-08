@@ -30,6 +30,7 @@ public class GeneralCard extends JPanel {
         );
 
         TreeSettingsSection() {
+            defaultExpandedLayerSpinner.setValue(settingsCopy.getDefaultExpandedLayers());
             defaultExpandedLayerSpinner.addChangeListener(e -> onExpandedLayerChange());
 
             // create header (Title ----)

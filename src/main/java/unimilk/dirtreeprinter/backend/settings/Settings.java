@@ -16,7 +16,7 @@ public class Settings implements ISettings {
 
     public Settings() {
         this.filterMode = FilterMode.BLACKLIST;
-        this.defaultExpandedLayers = 1;
+        this.defaultExpandedLayers = 0;
     }
 
     public int getDefaultExpandedLayers() {
@@ -93,6 +93,7 @@ public class Settings implements ISettings {
     @Override
     public Settings copy() {
         Settings newSettings = new Settings();
+        newSettings.setDefaultExpandedLayers(this.getDefaultExpandedLayers());
         newSettings.setFilterMode(this.getFilterMode());
         this.rules.forEach(newSettings::addRule);
         if (this.isModified()) {
@@ -107,18 +108,19 @@ public class Settings implements ISettings {
     public boolean equals(Object o) {
         if (!(o instanceof Settings)) return false;
         Settings settings = (Settings) o;
-        return isModified() == settings.isModified() && getFilterMode() == settings.getFilterMode() && Objects.equals(getRules(), settings.getRules());
+        return getDefaultExpandedLayers() == settings.getDefaultExpandedLayers() && isModified() == settings.isModified() && getFilterMode() == settings.getFilterMode() && Objects.equals(getRules(), settings.getRules());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFilterMode(), getRules(), isModified());
+        return Objects.hash(getDefaultExpandedLayers(), getFilterMode(), getRules(), isModified());
     }
 
     @Override
     public String toString() {
         return "Settings{" +
-                "filterMode=" + filterMode +
+                "defaultExpandedLayers=" + defaultExpandedLayers +
+                ", filterMode=" + filterMode +
                 ", rules=" + rules +
                 ", modified=" + modified +
                 '}';
