@@ -16,7 +16,7 @@ public class Settings implements ISettings {
 
     public Settings() {
         this.filterMode = FilterMode.BLACKLIST;
-        this.defaultExpandedLayers = 0;
+        this.defaultExpandedLayers = 1;
     }
 
     public int getDefaultExpandedLayers() {

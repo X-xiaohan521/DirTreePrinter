@@ -16,7 +16,7 @@ public class TreeDisplay extends JTree {
 
     private final ISettingsManager settingsManager;
     private RightClickMenu rightClickMenu;
-    private final List<TreePath> pathsToExpand = new ArrayList<>();
+    private final List<DefaultMutableTreeNode> uiNodesToExpand = new ArrayList<>();
 
     public TreeDisplay(ISettingsManager settingsManager) {
         this.settingsManager = settingsManager;
@@ -34,24 +34,28 @@ public class TreeDisplay extends JTree {
     }
 
     public void generateUiTree(TreeNode rootNode) {
+        // generate tree
         DefaultMutableTreeNode rootUiNode = generateUiTreeNode(rootNode, 0);
         setModel(new DefaultTreeModel(rootUiNode));
-        for (TreePath path : pathsToExpand) {
-            expandPath(path);
-        }
-        pathsToExpand.clear();
         setRootVisible(true);
+        collapseRow(0);
+
+        // expand tree by settings
+        for (DefaultMutableTreeNode uiNode : uiNodesToExpand) {
+            expandPath(new TreePath(uiNode.getPath()));
+        }
+        uiNodesToExpand.clear();
     }
 
     private DefaultMutableTreeNode generateUiTreeNode(TreeNode backendNode, int depth) {
         DefaultMutableTreeNode uiNode = new DefaultMutableTreeNode(backendNode);
 
-        if (depth <= settingsManager.getSettings().getDefaultExpandedLayers()) {
-            pathsToExpand.add(new TreePath(uiNode.getPath()));
+        for (TreeNode child : backendNode.getChildren()) {
+            uiNode.add(generateUiTreeNode(child, depth + 1));
         }
 
-        for (TreeNode child : backendNode.getChildren()) {
-            uiNode.add(generateUiTreeNode(child, depth - 1));
+        if (depth < settingsManager.getSettings().getDefaultExpandedLayers()) {
+            uiNodesToExpand.add(uiNode);
         }
 
         return uiNode;
