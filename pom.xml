@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>unimilk.dirtreeprinter</groupId>
     <artifactId>DirTreePrinter</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
 
     <name>DirTreePrinter</name>
-    <description>A little script for auto-generating directory tree.</description>
+    <description>A lightweight desktop tool for auto-generating directory tree.</description>
 
     <properties>
         <java.version>11</java.version>
