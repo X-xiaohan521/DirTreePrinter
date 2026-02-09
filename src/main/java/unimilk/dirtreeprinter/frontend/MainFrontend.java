@@ -7,11 +7,11 @@ import unimilk.dirtreeprinter.api.tree.TreeNode;
 import unimilk.dirtreeprinter.frontend.export.ExportPreviewDialog;
 import unimilk.dirtreeprinter.frontend.settings.SettingsDialog;
 import unimilk.dirtreeprinter.frontend.tree.TreeDisplay;
+import unimilk.dirtreeprinter.frontend.worker.ScanWorker;
 
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -24,6 +24,8 @@ public class MainFrontend extends JFrame {
     private String rootFolder;
     private TreeNode rootNode;
     private final TreeDisplay treeDisplay;
+
+    private final LoadingOverlayPanel loadingOverlay;
 
     public MainFrontend(
             ISettingsManager settingsManager,
@@ -46,11 +48,15 @@ public class MainFrontend extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        treeDisplay = new TreeDisplay();
+        treeDisplay = new TreeDisplay(settingsManager);
+        treeDisplay.setRightClickMenu(new RightClickMenu(settingsManager));
 
         add(new TopContainer(this), BorderLayout.PAGE_START);
         add(new JScrollPane(treeDisplay), BorderLayout.CENTER);
 
+        loadingOverlay =  new LoadingOverlayPanel("Scanning Folders...");
+        loadingOverlay.setVisible(false);
+        setGlassPane(loadingOverlay);
     }
 
     private class TopContainer extends JPanel {
@@ -59,17 +65,19 @@ public class MainFrontend extends JFrame {
 
         TopContainer(MainFrontend mainFrontend) {
             this.mainFrontend = mainFrontend;
-            setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-            add(new JSeparator(SwingConstants.HORIZONTAL));
-            add(createToolBar());
-            add(createButtonPanel());
+            setLayout(new BorderLayout());
+            add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.NORTH);
+            add(createToolBar(), BorderLayout.CENTER);
+            add(createButtonPanel(), BorderLayout.SOUTH);
         }
 
         JToolBar createToolBar() {
             JToolBar toolBar = new JToolBar();
-            toolBar.setLayout(new BorderLayout());
+            toolBar.setFloatable(false);
+            toolBar.setRollover(true);
 
-            toolBar.add(createFileButton(), BorderLayout.LINE_START);
+            toolBar.add(createFileButton());
+            toolBar.add(createEditButton());
 
             return toolBar;
         }
@@ -78,20 +86,34 @@ public class MainFrontend extends JFrame {
             JButton openFolderButton = new JButton("Open Folder");
             JButton exportButton = new JButton("Export");
             JButton clearButton = new JButton("Clear All");
+            JButton rescanButton = new JButton("Rescan");
 
             openFolderButton.addActionListener(e -> selectFolderToScan());
             exportButton.addActionListener(e -> exportToFile());
             clearButton.addActionListener(e -> clearOutput());
+            rescanButton.addActionListener(e -> onRescan());
 
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-            panel.add(openFolderButton);
-            panel.add(exportButton);
-            panel.add(clearButton);
+            // left group
+            JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+            leftPanel.add(openFolderButton);
+            leftPanel.add(exportButton);
+            leftPanel.add(clearButton);
+
+            // right group
+            JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+            rightPanel.add(rescanButton);
+
+            // build the whole row
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(leftPanel, BorderLayout.WEST);
+            panel.add(rightPanel, BorderLayout.EAST);
+
             return panel;
         }
 
+
         JButton createFileButton() {
-            JButton fileButton = new JButton("File");
+            JButton fileButton = new JButton(" File ");
 
             JPopupMenu menu = new JPopupMenu();
 
@@ -123,6 +145,33 @@ public class MainFrontend extends JFrame {
             return fileButton;
         }
 
+        JButton createEditButton() {
+            JButton editButton = new JButton(" Edit ");
+
+            JPopupMenu menu = new JPopupMenu();
+
+            JMenuItem undoItem = new JMenuItem("Undo");
+            JMenuItem redoItem = new JMenuItem("Redo");
+
+            menu.add(undoItem);
+            menu.add(redoItem);
+
+            editButton.addActionListener(e -> menu.show(editButton, 0, editButton.getHeight()));
+            return editButton;
+        }
+    }
+
+    private void onRescan() {
+        if (treeDisplay.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please first choose a folder to scan.",
+                    "Nothing to Rescan",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        startScanning(rootNode.getPath());
     }
 
     void selectFolderToScan() {
@@ -131,14 +180,28 @@ public class MainFrontend extends JFrame {
 
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             Path dir = chooser.getSelectedFile().toPath();
-            try {
-                rootNode = dirTreeGenerator.generateTree(dir, settingsManager.getSettings());
-                treeDisplay.generateUiTree(rootNode);
-                rootFolder = dir.getFileName().toString();
-            } catch (IOException ex) {
-                showError(ex);
-            }
+            startScanning(dir);
         }
+    }
+
+    private void startScanning(Path dir) {
+        rootFolder = dir.getFileName().toString();
+        ScanWorker scanWorker = new ScanWorker(
+                dirTreeGenerator,
+                dir,
+                settingsManager.getSettings(),
+                () -> loadingOverlay.setVisible(true),
+                rootNode -> {
+                    loadingOverlay.setVisible(false);
+                    this.rootNode = rootNode;
+                    treeDisplay.generateUiTree(this.rootNode);
+                },
+                ex -> {
+                    loadingOverlay.setVisible(false);
+                    setGlassPane(new JRootPane());
+                    showError(this, ex);
+                });
+        scanWorker.execute();
     }
 
     void exportToFile() {
@@ -170,9 +233,18 @@ public class MainFrontend extends JFrame {
         }
     }
 
-    void showError(Exception ex) {
+    public static void showError(Component parent, String message) {
         JOptionPane.showMessageDialog(
-                this,
+                parent,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    public static void showError(Component parent, Exception ex) {
+        JOptionPane.showMessageDialog(
+                parent,
                 ex.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE

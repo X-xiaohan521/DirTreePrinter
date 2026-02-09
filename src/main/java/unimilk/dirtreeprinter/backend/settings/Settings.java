@@ -9,12 +9,22 @@ import java.util.Objects;
 
 public class Settings implements ISettings {
 
+    private int defaultExpandedLayers;
     private FilterMode filterMode;
     private final List<String> rules = new ArrayList<>();
     private boolean modified = false;
 
     public Settings() {
         this.filterMode = FilterMode.BLACKLIST;
+        this.defaultExpandedLayers = 1;
+    }
+
+    public int getDefaultExpandedLayers() {
+        return defaultExpandedLayers;
+    }
+
+    public void setDefaultExpandedLayers(int defaultExpandedLayers) {
+        this.defaultExpandedLayers = defaultExpandedLayers;
     }
 
     @Override
@@ -42,6 +52,14 @@ public class Settings implements ISettings {
     }
 
     @Override
+    public void addRule(String rule, int index) {
+        if (!rules.contains(rule)) {
+            rules.add(index, rule);
+            modified = true;
+        }
+    }
+
+    @Override
     public boolean removeRule(String rule) {
         if (rules.remove(rule)) {
             modified = true;
@@ -49,6 +67,12 @@ public class Settings implements ISettings {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String removeRule(int index) {
+        modified = true;
+        return rules.remove(index);
     }
 
     @Override
@@ -69,6 +93,7 @@ public class Settings implements ISettings {
     @Override
     public Settings copy() {
         Settings newSettings = new Settings();
+        newSettings.setDefaultExpandedLayers(this.getDefaultExpandedLayers());
         newSettings.setFilterMode(this.getFilterMode());
         this.rules.forEach(newSettings::addRule);
         if (this.isModified()) {
@@ -83,18 +108,19 @@ public class Settings implements ISettings {
     public boolean equals(Object o) {
         if (!(o instanceof Settings)) return false;
         Settings settings = (Settings) o;
-        return isModified() == settings.isModified() && getFilterMode() == settings.getFilterMode() && Objects.equals(getRules(), settings.getRules());
+        return getDefaultExpandedLayers() == settings.getDefaultExpandedLayers() && isModified() == settings.isModified() && getFilterMode() == settings.getFilterMode() && Objects.equals(getRules(), settings.getRules());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFilterMode(), getRules(), isModified());
+        return Objects.hash(getDefaultExpandedLayers(), getFilterMode(), getRules(), isModified());
     }
 
     @Override
     public String toString() {
         return "Settings{" +
-                "filterMode=" + filterMode +
+                "defaultExpandedLayers=" + defaultExpandedLayers +
+                ", filterMode=" + filterMode +
                 ", rules=" + rules +
                 ", modified=" + modified +
                 '}';

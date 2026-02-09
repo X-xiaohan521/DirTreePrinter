@@ -7,7 +7,7 @@ Designed for developers who want to quickly document project structures in Markd
 ---
 
 ## 📋 Overview
-📌 **Latest Version: `v2.0.0`**  
+📌 **Latest Version: `v2.1.0`**  
 📌 **Supported Operating System: `Windows`**
 
 ---
@@ -56,6 +56,7 @@ Designed for developers who want to quickly document project structures in Markd
 5. **(Optional)** Open `Settings` to configure:
    - Filter mode (Blacklist / Whitelist)
    - Ignore rules
+   - Default expanding layers
 
 ---
 
@@ -64,16 +65,20 @@ Designed for developers who want to quickly document project structures in Markd
 > 📌 Automatically generated at `C:\Users\<username>\AppData\Roaming\DirTreePrinter` on first launch.
 ```json
 {
+  "defaultExpandedLayers":3,
   "filterMode":"BLACKLIST",
-  "rules":[".idea",".git"],
+  "rules":[".idea",".git","target"],
   "modified":false
 }
 ```
+- defaultExpandedLayers: how many layers of folders will be expanded by default when a tree is displayed
 - filterMode: how will the ignore rules be applied
   - BLACKLIST → exclude listed names
   - WHITELIST → only include listed names
 - rules: the folders or files you specify
 
+> [!NOTE]
+> All the settings in `config.json` can be configured **in the settings panel of DirTreePrinter app**, if you really want to change the configs manually, restart the app for the changes to take effect.
 ---
 
 ## 🛠️ Technical Overview
@@ -109,7 +114,9 @@ DirTreePrinter/
 │   │   │           │   │   ├── ExportDialog.java
 │   │   │           │   │   └── ExportPreviewDialog.java
 │   │   │           │   ├── settings
+│   │   │           │   │   ├── GeneralCard.java
 │   │   │           │   │   ├── IgnoreRulesCard.java
+│   │   │           │   │   ├── ListReorderTransferHandler.java
 │   │   │           │   │   ├── SettingsCards.java
 │   │   │           │   │   └── SettingsDialog.java
 │   │   │           │   ├── tree
@@ -117,7 +124,11 @@ DirTreePrinter/
 │   │   │           │   │   ├── CheckBoxTreeCellRenderer.java
 │   │   │           │   │   ├── TreeCellClickListener.java
 │   │   │           │   │   └── TreeDisplay.java
-│   │   │           │   └── MainFrontend.java
+│   │   │           │   ├── worker
+│   │   │           │   │   └── ScanWorker.java
+│   │   │           │   ├── LoadingOverlayPanel.java
+│   │   │           │   ├── MainFrontend.java
+│   │   │           │   └── RightClickMenu.java
 │   │   │           └── DirTreeApp.java
 │   │   └── resources
 │   │       ├── icons
@@ -139,6 +150,8 @@ DirTreePrinter/
 │                       └── tree
 │                           └── CheckBoxTreeCellRendererTest.java
 ├── .gitignore
+├── CHANGELOG.md
+├── LICENSE
 ├── pom.xml
 └── README.md
 ```
@@ -147,7 +160,7 @@ DirTreePrinter/
 * Java
 * Swing
 * FlatLaf
-* SnakeYAML
+* Gson
 * Maven
 * exe4j
 
@@ -169,18 +182,21 @@ The executable JAR will be generated in: `target/`
 
 ## 📜 Changelog
 > 📌 Only the latest version is listed here. See `CHANGELOG.md` for older versions.
-### [2.0.0] - 2026-01-20
+### [2.1.0] - 2026-02-09
 
 ### 🆕 What's New
-- Added checkboxs for every tree node scanned, which take into effect when exporting to file.
-- Added a preview window before exporting.
+- Added a loading animation when scanning folders.
+- Added a right-click menu to send folders to ignore rules or open them in file explorer.
+- Added a Rescan button to rescan the root folder.
+- Added a default expanded layers setting for the tree display.
 
 ### 🌟 Improvements
-- Improved the logic of saving and loading config file.
-- Display the window at the middle of the screen, rather than the top-left corner.
+- Polished overall UI/UX experience.
+- Enabled drag-to-reorder for ignore rules.
 
 ### 🛠 Bugfixes
-- Fixed errors when loading broken config file.
+- Fixed frontend freezing during folder scanning tasks.
+
 ---
 
 ## 💡 Contributing

@@ -9,12 +9,18 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.function.BiConsumer;
 
 public class TreeCellClickListener implements MouseListener {
     private final JTree tree;
+    private BiConsumer<MouseEvent, DefaultMutableTreeNode> showPopupMenu;
 
     public TreeCellClickListener(JTree tree) {
         this.tree = tree;
+    }
+
+    public void setPopupMenuHandler(BiConsumer<MouseEvent, DefaultMutableTreeNode> showPopupMenu) {
+        this.showPopupMenu = showPopupMenu;
     }
 
     @Override
@@ -89,12 +95,27 @@ public class TreeCellClickListener implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        maybeShowPopup(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        maybeShowPopup(e);
+    }
 
+    private void maybeShowPopup(MouseEvent e) {
+        if (e.isPopupTrigger() && showPopupMenu != null) {
+            handleRightClick(e);
+        }
+    }
+
+    private void handleRightClick(MouseEvent e) {
+        int row = tree.getRowForLocation(e.getX(), e.getY());
+        TreePath path = tree.getPathForRow(row);
+        if (row == -1 || path == null) return;
+        tree.setSelectionPath(path);
+        DefaultMutableTreeNode uiNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+        showPopupMenu.accept(e, uiNode);
     }
 
     @Override

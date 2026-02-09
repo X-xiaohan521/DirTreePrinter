@@ -59,6 +59,11 @@ public class IgnoreRulesCard extends JPanel {
         ruleList = new JList<>(ruleListModel);
         ruleList.setFixedCellHeight(19);
 
+        // allow drag to reorder
+        ruleList.setDragEnabled(true);
+        ruleList.setDropMode(DropMode.INSERT);
+        ruleList.setTransferHandler(new ListReorderTransferHandler(settingsCopy));
+
         // add rules to the model
         settingsCopy.getRules().forEach(ruleListModel::addElement);
 

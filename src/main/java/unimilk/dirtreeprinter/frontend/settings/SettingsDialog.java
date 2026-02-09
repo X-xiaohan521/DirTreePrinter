@@ -53,6 +53,9 @@ public class SettingsDialog extends JDialog {
         splitPane.setResizeWeight(0);
         splitPane.setBorder(null);
         add(splitPane, BorderLayout.CENTER);
+
+        // set cancelButton highlighted
+        getRootPane().setDefaultButton(cancelButton);
     }
 
     private JList<String> createCategoryList() {
@@ -81,16 +84,11 @@ public class SettingsDialog extends JDialog {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        cardPanel.add(createGeneralPanel(), SettingsCards.GENERAL);
+        cardPanel.add(new GeneralCard(settingsCopy), SettingsCards.GENERAL);
         cardPanel.add(new IgnoreRulesCard(settingsCopy), SettingsCards.IGNORE_RULES);
         cardPanel.add(createAppearancePanel(), SettingsCards.APPEARANCE);
         cardPanel.add(createAdvancedPanel(), SettingsCards.ADVANCED);
 
-    }
-
-    private JPanel createGeneralPanel() {
-        // TODO
-        return new JPanel();
     }
 
     private JPanel createAppearancePanel() {
