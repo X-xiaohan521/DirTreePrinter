@@ -186,17 +186,16 @@ The executable JAR will be generated in: `target/`
 
 ### 🆕 What's New
 - Added a loading animation when scanning folders.
-- Added a right-click menu, allowing sending to ignore rules or openning in file-explorer.
-- Added a rescan button for rescanning the root folder.
-- Add a rescan button for rescanning the root folder.
-- Add default expanded layers setting.
+- Added a right-click menu to send folders to ignore rules or open them in file explorer.
+- Added a Rescan button to rescan the root folder.
+- Added a default expanded layers setting for the tree display.
 
 ### 🌟 Improvements
-- Polished UI/UX experience.
-- Allow drag to reorder for ignore rules.
+- Polished overall UI/UX experience.
+- Enabled drag-to-reorder for ignore rules.
 
 ### 🛠 Bugfixes
-- Addressed frontend frozen issue when scanning tasks are performed.
+- Fixed frontend freezing during folder scanning tasks.
 
 ---
 
