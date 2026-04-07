@@ -29,7 +29,7 @@ public class JsonSettingsManager implements ISettingsManager {
         }
         try {
             this.settings = gson.fromJson(jsonStr, Settings.class);
-            if (this.settings.getFilterMode() == null) {
+            if (this.settings == null || this.settings.getFilterMode() == null) {
                 saveDefaultSettings();
             }
         } catch (JsonSyntaxException e) {
